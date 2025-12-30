@@ -218,19 +218,38 @@ const PlinkoGame = ({ onScore, lastDrop, soundEnabled })=>{
                 }
             }["PlinkoGame.useEffect.initAudio"];
             initAudio();
-            // Resume audio context on user interaction
+            // Resume audio context on user interaction (critical for mobile)
             const resumeAudio = {
-                "PlinkoGame.useEffect.resumeAudio": ()=>{
-                    if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
-                        audioContextRef.current.resume();
+                "PlinkoGame.useEffect.resumeAudio": async ()=>{
+                    if (audioContextRef.current) {
+                        if (audioContextRef.current.state === 'suspended') {
+                            await audioContextRef.current.resume();
+                            console.log('Audio context resumed');
+                        }
+                        // Play a silent sound to "unlock" audio on iOS
+                        try {
+                            const silentBuffer = audioContextRef.current.createBuffer(1, 1, 22050);
+                            const source = audioContextRef.current.createBufferSource();
+                            source.buffer = silentBuffer;
+                            source.connect(audioContextRef.current.destination);
+                            source.start(0);
+                            console.log('Silent sound played to unlock audio');
+                        } catch (e) {
+                            console.log('Silent sound failed:', e);
+                        }
                     }
                 }
             }["PlinkoGame.useEffect.resumeAudio"];
+            // Add both mouse and touch events for better mobile support
             document.addEventListener('click', resumeAudio);
+            document.addEventListener('touchstart', resumeAudio, {
+                once: true
+            });
             document.addEventListener('keydown', resumeAudio);
             return ({
                 "PlinkoGame.useEffect": ()=>{
                     document.removeEventListener('click', resumeAudio);
+                    document.removeEventListener('touchstart', resumeAudio);
                     document.removeEventListener('keydown', resumeAudio);
                 }
             })["PlinkoGame.useEffect"];
@@ -238,6 +257,10 @@ const PlinkoGame = ({ onScore, lastDrop, soundEnabled })=>{
     }["PlinkoGame.useEffect"], []);
     const playSound = (soundKey, volume = 0.3, duration, pitch = 1.0)=>{
         if (!soundEnabled || !audioContextRef.current || !audioBuffers.current.has(soundKey)) return;
+        // Ensure audio context is running (critical for mobile)
+        if (audioContextRef.current.state === 'suspended') {
+            audioContextRef.current.resume();
+        }
         try {
             const audioBuffer = audioBuffers.current.get(soundKey);
             const source = audioContextRef.current.createBufferSource();
@@ -775,12 +798,12 @@ const PlinkoGame = ({ onScore, lastDrop, soundEnabled })=>{
             ref: canvasRef
         }, void 0, false, {
             fileName: "[project]/PLINKO/components/PlinkoGame.tsx",
-            lineNumber: 660,
+            lineNumber: 682,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/PLINKO/components/PlinkoGame.tsx",
-        lineNumber: 656,
+        lineNumber: 678,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };

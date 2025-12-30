@@ -94,24 +94,46 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled
 
     initAudio();
 
-    // Resume audio context on user interaction
-    const resumeAudio = () => {
-      if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
-        audioContextRef.current.resume();
+    // Resume audio context on user interaction (critical for mobile)
+    const resumeAudio = async () => {
+      if (audioContextRef.current) {
+        if (audioContextRef.current.state === 'suspended') {
+          await audioContextRef.current.resume();
+          console.log('Audio context resumed');
+        }
+        // Play a silent sound to "unlock" audio on iOS
+        try {
+          const silentBuffer = audioContextRef.current.createBuffer(1, 1, 22050);
+          const source = audioContextRef.current.createBufferSource();
+          source.buffer = silentBuffer;
+          source.connect(audioContextRef.current.destination);
+          source.start(0);
+          console.log('Silent sound played to unlock audio');
+        } catch (e) {
+          console.log('Silent sound failed:', e);
+        }
       }
     };
 
+    // Add both mouse and touch events for better mobile support
     document.addEventListener('click', resumeAudio);
+    document.addEventListener('touchstart', resumeAudio, { once: true });
     document.addEventListener('keydown', resumeAudio);
 
     return () => {
       document.removeEventListener('click', resumeAudio);
+      document.removeEventListener('touchstart', resumeAudio);
       document.removeEventListener('keydown', resumeAudio);
     };
   }, []);
 
   const playSound = (soundKey: string, volume: number = 0.3, duration?: number, pitch: number = 1.0) => {
     if (!soundEnabled || !audioContextRef.current || !audioBuffers.current.has(soundKey)) return;
+
+    // Ensure audio context is running (critical for mobile)
+    if (audioContextRef.current.state === 'suspended') {
+      audioContextRef.current.resume();
+    }
 
     try {
       const audioBuffer = audioBuffers.current.get(soundKey)!;
