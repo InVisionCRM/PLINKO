@@ -431,6 +431,11 @@ img, video {
   margin-right: auto;
 }
 
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
 .mb-1 {
   margin-bottom: .25rem;
 }
@@ -609,6 +614,10 @@ img, video {
 
 .max-h-\[90vh\] {
   max-height: 90vh;
+}
+
+.max-h-\[85vh\] {
+  max-height: 85vh;
 }
 
 .w-10 {
@@ -1766,6 +1775,10 @@ img, video {
 
 .pt-4 {
   padding-top: 1rem;
+}
+
+.pt-3 {
+  padding-top: .75rem;
 }
 
 .text-left {

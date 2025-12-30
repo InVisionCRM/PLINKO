@@ -110,76 +110,76 @@ export default function HighPercentageWarningModal({
     <>
       <style dangerouslySetInnerHTML={{ __html: modalStyles }} />
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent
-          className="max-w-4xl max-h-[90vh] overflow-y-auto modal-enter"
-          style={{
-            backgroundImage: `url("/ui/pg4.png")`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            backgroundBlendMode: 'multiply'
-          }}
-        >
+      <DialogContent
+        className="max-w-2xl max-h-[85vh] overflow-y-auto modal-enter mx-4"
+        style={{
+          backgroundImage: `url("/ui/pg4.png")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          backgroundBlendMode: 'multiply'
+        }}
+      >
         <DialogHeader>
-          <DialogTitle className="text-white text-2xl font-bold text-center mb-4">
+          <DialogTitle className="text-white text-xl font-bold text-center mb-2">
             ⚠️ HIGH PERCENTAGE WARNING
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Warning Text */}
-          <div className="bg-red-900/80 border border-red-500 rounded-lg p-4">
-            <p className="text-white text-lg font-semibold text-center mb-2">
+          <div className="bg-red-900/80 border border-red-500 rounded-lg p-3">
+            <p className="text-white text-sm font-semibold text-center mb-1">
               Warning: Setting this higher can lose a significant portion of your funds if you have not set these parameters correctly.
             </p>
-            <p className="text-yellow-200 text-center font-medium">
+            <p className="text-yellow-200 text-center text-sm font-medium">
               If you do not have a real strategy, keep this option set to "Return to initial bet".
             </p>
-            <p className="text-green-300 text-center font-bold text-lg mt-2">
+            <p className="text-green-300 text-center font-bold text-sm mt-1">
               Play Safe. Play Smart.
             </p>
           </div>
 
           {/* Example Calculation */}
           {settings && (
-            <div className="bg-black/60 border border-yellow-500 rounded-lg p-6 animate-in slide-in-from-bottom-4 duration-500 delay-200">
-              <h3 className="text-white text-2xl font-bold text-center mb-6">
+            <div className="bg-black/60 border border-yellow-500 rounded-lg p-4 animate-in slide-in-from-bottom-4 duration-500 delay-200">
+              <h3 className="text-white text-lg font-bold text-center mb-4">
                 ⚠️ DANGER EXAMPLE: $1,000 Balance + 10% Increase Each Round
               </h3>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-white">
+                <table className="w-full text-white text-sm">
                   <thead>
                     <tr className="border-b border-yellow-500">
-                      <th className="text-left py-2 px-3">Round</th>
-                      <th className="text-center py-2 px-3">Bet Amount</th>
-                      <th className="text-center py-2 px-3">Result</th>
-                      <th className="text-center py-2 px-3">Balance After</th>
-                      <th className="text-center py-2 px-3">Math</th>
+                      <th className="text-left py-1 px-2">Round</th>
+                      <th className="text-center py-1 px-2">Bet</th>
+                      <th className="text-center py-1 px-2">Result</th>
+                      <th className="text-center py-1 px-2">Balance</th>
+                      <th className="text-center py-1 px-2">Math</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {exampleData.progression.map((entry, index) => (
+                    {exampleData.progression.slice(0, 6).map((entry, index) => ( // Show only first 6 rounds
                       <tr key={index} className="border-b border-gray-700 hover:bg-gray-800/50 transition-colors">
-                        <td className="py-3 px-3 font-bold">
-                          {index === 0 ? 'Start' : `Round ${index}`}
+                        <td className="py-2 px-2 font-bold text-xs">
+                          {index === 0 ? 'Start' : `R${index}`}
                         </td>
-                        <td className="py-3 px-3 text-center text-yellow-400 font-bold">
+                        <td className="py-2 px-2 text-center text-yellow-400 font-bold text-xs">
                           ${entry.bet.toFixed(2)}
                         </td>
-                        <td className={`py-3 px-3 text-center font-bold ${
+                        <td className={`py-2 px-2 text-center font-bold text-xs ${
                           entry.result.startsWith('+') ? 'text-green-400' :
                           entry.result.startsWith('-') ? 'text-red-400' : 'text-blue-400'
                         }`}>
                           {entry.result}
                         </td>
-                        <td className="py-3 px-3 text-center text-cyan-400 font-bold">
+                        <td className="py-2 px-2 text-center text-cyan-400 font-bold text-xs">
                           ${entry.balance.toFixed(2)}
                         </td>
-                        <td className="py-3 px-3 text-center text-sm text-gray-300">
-                          {index === 0 ? 'Initial bet' :
-                           `$${exampleData.progression[index-1].bet.toFixed(2)} × 1.10 = $${entry.bet.toFixed(2)}`}
+                        <td className="py-2 px-2 text-center text-xs text-gray-300">
+                          {index === 0 ? 'Initial' :
+                           `${exampleData.progression[index-1].bet.toFixed(2)} × 1.10`}
                         </td>
                       </tr>
                     ))}
@@ -187,14 +187,14 @@ export default function HighPercentageWarningModal({
                 </table>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 gap-4 text-center">
-                <div className="bg-red-900/60 rounded-lg p-4">
-                  <div className="text-red-300 font-bold text-lg">Total Wagered</div>
-                  <div className="text-white font-bold text-2xl">${exampleData.totalWagered.toFixed(2)}</div>
+              <div className="mt-4 grid grid-cols-2 gap-3 text-center">
+                <div className="bg-red-900/60 rounded-lg p-2">
+                  <div className="text-red-300 font-bold text-sm">Total Wagered</div>
+                  <div className="text-white font-bold text-lg">${exampleData.totalWagered.toFixed(2)}</div>
                 </div>
-                <div className="bg-blue-900/60 rounded-lg p-4">
-                  <div className="text-blue-300 font-bold text-lg">Final Balance</div>
-                  <div className={`font-bold text-2xl ${
+                <div className="bg-blue-900/60 rounded-lg p-2">
+                  <div className="text-blue-300 font-bold text-sm">Final Balance</div>
+                  <div className={`font-bold text-lg ${
                     exampleData.remainingBalance > 1000 ? 'text-green-400' :
                     exampleData.remainingBalance < 1000 ? 'text-red-400' : 'text-white'
                   }`}>
@@ -203,29 +203,29 @@ export default function HighPercentageWarningModal({
                 </div>
               </div>
 
-              <div className="mt-4 text-center">
-                <div className="text-yellow-400 font-semibold text-lg">
-                  This shows what happens with 10% increases on a $1,000 balance over 10 rounds
+              <div className="mt-3 text-center">
+                <div className="text-yellow-400 font-semibold text-sm">
+                  10% increases on $1,000 balance over 10 rounds
                 </div>
-                <div className="text-orange-300 font-medium mt-2">
-                  ⚠️ Your actual results will vary based on wins/losses and your specific settings
+                <div className="text-orange-300 font-medium text-xs mt-1">
+                  ⚠️ Results vary based on wins/losses
                 </div>
               </div>
             </div>
           )}
 
           {/* Action Buttons */}
-          <div className="flex gap-4 pt-4">
+          <div className="flex gap-3 pt-3">
             <Button
               onClick={onCancel}
               variant="outline"
-              className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white border-gray-500"
+              className="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white border-gray-500 text-sm"
             >
               Cancel - Go Back
             </Button>
             <Button
               onClick={onConfirm}
-              className="flex-1 py-3 bg-yellow-600 hover:bg-yellow-700 text-black font-bold"
+              className="flex-1 py-2 bg-yellow-600 hover:bg-yellow-700 text-black font-bold text-sm"
             >
               I Understand - Continue
             </Button>

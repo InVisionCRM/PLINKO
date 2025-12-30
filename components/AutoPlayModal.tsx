@@ -38,6 +38,12 @@ export default function AutoPlayModal({ open, onOpenChange, onStart, currentBala
   const [showMoreOptions, setShowMoreOptions] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [pendingSettings, setPendingSettings] = useState<AutoPlaySettings | null>(null);
+  const [hasSeenWarning, setHasSeenWarning] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('plinko-high-percentage-warning-seen') === 'true';
+    }
+    return false;
+  });
   const [settings, setSettings] = useState<AutoPlaySettings>({
     riskLevel: 'GREEN',
     numberOfRounds: 10,
@@ -64,8 +70,8 @@ export default function AutoPlayModal({ open, onOpenChange, onStart, currentBala
       const currentValue = prev[key] as number;
       const newValue = Math.max(0, Math.min(200, currentValue + delta));
 
-      // Check if percentage exceeds 10% and show warning
-      if ((key === 'onLossPercent' || key === 'onWinPercent') && newValue > 10) {
+      // Check if percentage exceeds 10% and show warning (only once)
+      if ((key === 'onLossPercent' || key === 'onWinPercent') && newValue > 10 && !hasSeenWarning) {
         setPendingSettings({...prev, [key]: newValue});
         setShowWarningModal(true);
         return prev; // Don't update the actual settings yet
@@ -103,24 +109,21 @@ export default function AutoPlayModal({ open, onOpenChange, onStart, currentBala
       return;
     }
 
-    // Check if any percentage is over 10%
-    const hasHighPercentage = settings.onWinPercent > 10 || settings.onLossPercent > 10;
-
-    if (hasHighPercentage) {
-      setPendingSettings(settings);
-      setShowWarningModal(true);
-    } else {
-      onStart(settings);
-      onOpenChange(false);
-    }
+    // No warning on start - only when adjusting percentages
+    onStart(settings);
+    onOpenChange(false);
   };
 
   const handleConfirmHighPercentage = () => {
     if (pendingSettings) {
       setSettings(pendingSettings); // Update the actual settings
+      setHasSeenWarning(true);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('plinko-high-percentage-warning-seen', 'true');
+      }
       setShowWarningModal(false);
       setPendingSettings(null);
-      // Don't start auto-play here, just update settings
+      // Don't close the main modal, just update settings and close warning
     }
   };
 
