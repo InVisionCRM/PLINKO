@@ -49,6 +49,7 @@ const Home: React.FC = () => {
   const [remainingBalls, setRemainingBalls] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [winLossBadge, setWinLossBadge] = useState<{ amount: number; key: number } | null>(null);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   const lastRiskRef = useRef<RiskLevel>('GREEN');
   const historyIdCounter = useRef(0);
 
@@ -241,18 +242,20 @@ const Home: React.FC = () => {
       <MainNav />
 
       {/* HEADER SECTION */}
-      <header className="flex justify-between items-center px-2 py-1 z-30 mt-[45px]">
-        {/* History (Left) */}
-        <div className="flex items-center gap-1 max-w-[60%] overflow-hidden">
-          <button
-            onClick={() => setShowExtendedHistory(true)}
-            className="w-8 h-8 rounded-full bg-gradient-to-b from-gray-500 via-gray-600 to-gray-800 border-b-4 border-gray-900 shadow-xl shadow-gray-900/80 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75 text-white flex items-center justify-center flex-shrink-0"
-            title="View extended history"
-          >
-            <i className="fas fa-history text-xs"></i>
-          </button>
-          <div className="flex gap-0.5 overflow-x-auto no-scrollbar scroll-smooth">
-            {history.length > 0 ? history.slice(0, 6).map((item, index) => {
+      <header className="flex justify-between items-start px-2 py-1 z-30 mt-[45px]">
+        {/* History and Sound Toggle (Left) */}
+        <div className="flex flex-col gap-1 max-w-[60%]">
+          {/* History Row */}
+          <div className="flex items-center gap-1 overflow-hidden">
+            <button
+              onClick={() => setShowExtendedHistory(true)}
+              className="w-8 h-8 rounded-full bg-gradient-to-b from-gray-500 via-gray-600 to-gray-800 border-b-4 border-gray-900 shadow-xl shadow-gray-900/80 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75 text-white flex items-center justify-center flex-shrink-0"
+              title="View extended history"
+            >
+              <i className="fas fa-history text-xs"></i>
+            </button>
+            <div className="flex gap-0.5 overflow-x-auto no-scrollbar scroll-smooth">
+              {history.length > 0 ? history.slice(0, 6).map((item, index) => {
               // Determine color based on risk level and multiplier
               let bgColor = '';
               const isDark = item.multiplier < 1;
@@ -282,6 +285,30 @@ const Home: React.FC = () => {
             }) : (
               <div className="text-[11px] text-white/60 font-bold uppercase tracking-widest px-1 italic">Waiting for results...</div>
             )}
+            </div>
+          </div>
+
+          {/* Sound Toggle */}
+          <div className="flex items-center gap-2 pl-1">
+            <button
+              onClick={() => setSoundEnabled(!soundEnabled)}
+              className={`relative w-12 h-6 rounded-full transition-all duration-300 ${
+                soundEnabled
+                  ? 'bg-gradient-to-r from-green-500 to-green-600'
+                  : 'bg-gradient-to-r from-gray-600 to-gray-700'
+              } shadow-lg`}
+            >
+              <div
+                className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-all duration-300 flex items-center justify-center ${
+                  soundEnabled ? 'left-[26px]' : 'left-0.5'
+                }`}
+              >
+                <i className={`fas ${soundEnabled ? 'fa-volume-up' : 'fa-volume-mute'} text-[8px] ${soundEnabled ? 'text-green-600' : 'text-gray-600'}`}></i>
+              </div>
+            </button>
+            <span className="text-white text-[9px] font-bold uppercase tracking-wide">
+              {soundEnabled ? 'On' : 'Off'}
+            </span>
           </div>
         </div>
 
@@ -312,12 +339,13 @@ const Home: React.FC = () => {
       </header>
 
       {/* MAIN CONTENT - Single column layout */}
-      <main className="flex-1 flex flex-col gap-1 p-1 pb-1 overflow-hidden">
+      <main className="flex-1 flex flex-col gap-1 p-1 pb-20 sm:pb-1 overflow-hidden">
         {/* GAME BOARD */}
         <div className="flex-1 w-full flex justify-center items-start bg-black/5 rounded-lg border border-black/10 shadow-inner pt-1 overflow-auto">
           <PlinkoGame
             onScore={handleScore}
             lastDrop={lastDrop}
+            soundEnabled={soundEnabled}
           />
         </div>
 
@@ -325,7 +353,7 @@ const Home: React.FC = () => {
         <div
           className="flex-shrink-0 bg-black/20 rounded-2xl"
           style={{
-            backgroundColor: 'rgba(100, 95, 158, 0.64)'
+            backgroundColor: 'rgba(162, 214, 236, 0.71)'
           }}
         >
           {/* Desktop Layout - Single Row */}
@@ -337,7 +365,7 @@ const Home: React.FC = () => {
             >
               <div className="text-center">
                 <div className="text-white/60 text-[9px] font-medium uppercase tracking-wide">Bet USD</div>
-                <div className="text-white font-bold text-lg font-mono">{wager.toFixed(2)}</div>
+                <div className="text-white font-bold text-lg font-poppins">{wager.toFixed(2)}</div>
               </div>
             </button>
 
@@ -374,19 +402,19 @@ const Home: React.FC = () => {
             {/* Risk Level Buttons */}
             <button
               onClick={() => dropBall('GREEN')}
-              className="h-12 px-6 rounded-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-green-800 hover:from-green-300 hover:via-green-400 hover:to-green-600 hover:shadow-gray-900/90 hover:border-green-700 active:shadow-inner active:shadow-gray-900/60 active:border-green-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+              className="h-10 px-6 rounded-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-green-800 hover:from-green-300 hover:via-green-400 hover:to-green-600 hover:shadow-gray-900/90 hover:border-green-700 active:shadow-inner active:shadow-gray-900/60 active:border-green-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
             >
               GREEN
             </button>
             <button
               onClick={() => dropBall('YELLOW')}
-              className="h-12 px-6 rounded-full bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-blue-800 hover:from-blue-300 hover:via-blue-400 hover:to-blue-600 hover:shadow-gray-900/90 hover:border-blue-700 active:shadow-inner active:shadow-gray-900/60 active:border-blue-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+              className="h-10 px-6 rounded-full bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-blue-800 hover:from-blue-300 hover:via-blue-400 hover:to-blue-600 hover:shadow-gray-900/90 hover:border-blue-700 active:shadow-inner active:shadow-gray-900/60 active:border-blue-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
             >
               BLUE
             </button>
             <button
               onClick={() => dropBall('RED')}
-              className="h-12 px-6 rounded-full bg-gradient-to-b from-red-400 via-red-500 to-red-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-red-800 hover:from-red-300 hover:via-red-400 hover:to-red-600 hover:shadow-gray-900/90 hover:border-red-700 active:shadow-inner active:shadow-gray-900/60 active:border-red-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+              className="h-10 px-6 rounded-full bg-gradient-to-b from-red-400 via-red-500 to-red-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-red-800 hover:from-red-300 hover:via-red-400 hover:to-red-600 hover:shadow-gray-900/90 hover:border-red-700 active:shadow-inner active:shadow-gray-900/60 active:border-red-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
             >
               RED
             </button>
@@ -416,24 +444,24 @@ const Home: React.FC = () => {
           </div>
 
           {/* Mobile Layout - 2 Rows */}
-          <div className="sm:hidden flex flex-col gap-1 p-1">
+          <div className="sm:hidden flex flex-col gap-2 p-1">
             {/* Row 1: Risk Buttons + Auto Play */}
             <div className="flex items-center justify-center gap-2">
               <button
                 onClick={() => dropBall('GREEN')}
-                className="h-12 px-6 rounded-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-green-800 hover:from-green-300 hover:via-green-400 hover:to-green-600 hover:shadow-gray-900/90 hover:border-green-700 active:shadow-inner active:shadow-gray-900/60 active:border-green-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+                className="h-10 px-6 rounded-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 text-white font-bold text-md shadow-xl shadow-gray-900/80 border-b-4 border-green-800 hover:from-green-300 hover:via-green-400 hover:to-green-600 hover:shadow-gray-900/90 hover:border-green-700 active:shadow-inner active:shadow-gray-900/60 active:border-green-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
               >
                 GREEN
               </button>
               <button
                 onClick={() => dropBall('YELLOW')}
-                className="h-12 px-6 rounded-full bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-blue-800 hover:from-blue-300 hover:via-blue-400 hover:to-blue-600 hover:shadow-gray-900/90 hover:border-blue-700 active:shadow-inner active:shadow-gray-900/60 active:border-blue-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+                className="h-10 px-6 rounded-full bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 text-white font-bold text-md shadow-xl shadow-gray-900/80 border-b-4 border-blue-800 hover:from-blue-300 hover:via-blue-400 hover:to-blue-600 hover:shadow-gray-900/90 hover:border-blue-700 active:shadow-inner active:shadow-gray-900/60 active:border-blue-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
               >
-                YELLOW
+                BLUE
               </button>
               <button
                 onClick={() => dropBall('RED')}
-                className="h-12 px-6 rounded-full bg-gradient-to-b from-red-400 via-red-500 to-red-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-red-800 hover:from-red-300 hover:via-red-400 hover:to-red-600 hover:shadow-gray-900/90 hover:border-red-700 active:shadow-inner active:shadow-gray-900/60 active:border-red-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+                className="h-10 px-6 rounded-full bg-gradient-to-b from-red-400 via-red-500 to-red-700 text-white font-bold text-md shadow-xl shadow-gray-900/80 border-b-4 border-red-800 hover:from-red-300 hover:via-red-400 hover:to-red-600 hover:shadow-gray-900/90 hover:border-red-700 active:shadow-inner active:shadow-gray-900/60 active:border-red-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
               >
                 RED
               </button>
@@ -463,14 +491,14 @@ const Home: React.FC = () => {
             </div>
 
             {/* Row 2: Bet Display + Control Buttons */}
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-4">
               <button
                 onClick={() => setShowCustomAmountModal(true)}
-                className="bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 rounded-full px-5 py-1.5 shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 flex-1 max-w-[180px] hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75"
+                className="bg-gradient-to-b from-slate-900 via-slate-600 to-slate-800 rounded-full px-5 py-0 shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 flex-1 max-w-[180px] hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75"
               >
                 <div className="text-center">
-                  <div className="text-white/60 text-[8px] font-medium uppercase">Bet USD</div>
-                  <div className="text-white font-bold text-base font-mono">{wager.toFixed(2)}</div>
+                  <div className="text-green-500 text-[10px] font-medium uppercase">Bet USD</div>
+                  <div className="text-white font-bold text-lg font-poppinsxf">{wager.toFixed(2)}</div>
                 </div>
               </button>
 
@@ -480,7 +508,7 @@ const Home: React.FC = () => {
                 onMouseLeave={stopAdjusting}
                 onTouchStart={() => startAdjusting(-0.1)}
                 onTouchEnd={stopAdjusting}
-                className="w-11 h-11 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white font-bold text-xl shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75"
+                className="w-8 h-8 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white font-bold text-xl shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75"
               >
                 −
               </button>
@@ -496,7 +524,7 @@ const Home: React.FC = () => {
                 onMouseLeave={stopAdjusting}
                 onTouchStart={() => startAdjusting(0.1)}
                 onTouchEnd={stopAdjusting}
-                className="w-11 h-11 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white font-bold text-xl shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75"
+                className="w-8 h-8 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white font-bold text-xl shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75"
               >
                 +
               </button>

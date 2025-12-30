@@ -17,6 +17,7 @@ import { CollisionLabel, RiskLevel } from '../types';
 interface PlinkoGameProps {
   onScore: (multiplier: number) => void;
   lastDrop: { id: number; risk: RiskLevel } | null;
+  soundEnabled: boolean;
 }
 
 // Collision categories to prevent ball-ball interactions (like online Plinko games)
@@ -27,7 +28,7 @@ const COLLISION_CATEGORIES = {
   WALL: 0x0008     // Category for walls (if any)
 };
 
-const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop }) => {
+const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
@@ -110,7 +111,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop }) => {
   }, []);
 
   const playSound = (soundKey: string, volume: number = 0.3, duration?: number, pitch: number = 1.0) => {
-    if (!audioContextRef.current || !audioBuffers.current.has(soundKey)) return;
+    if (!soundEnabled || !audioContextRef.current || !audioBuffers.current.has(soundKey)) return;
 
     try {
       const audioBuffer = audioBuffers.current.get(soundKey)!;

@@ -153,7 +153,7 @@ const COLLISION_CATEGORIES = {
     BUCKET: 0x0004,
     WALL: 0x0008 // Category for walls (if any)
 };
-const PlinkoGame = ({ onScore, lastDrop })=>{
+const PlinkoGame = ({ onScore, lastDrop, soundEnabled })=>{
     _s();
     const containerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const canvasRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
@@ -237,7 +237,7 @@ const PlinkoGame = ({ onScore, lastDrop })=>{
         }
     }["PlinkoGame.useEffect"], []);
     const playSound = (soundKey, volume = 0.3, duration, pitch = 1.0)=>{
-        if (!audioContextRef.current || !audioBuffers.current.has(soundKey)) return;
+        if (!soundEnabled || !audioContextRef.current || !audioBuffers.current.has(soundKey)) return;
         try {
             const audioBuffer = audioBuffers.current.get(soundKey);
             const source = audioContextRef.current.createBufferSource();
@@ -775,12 +775,12 @@ const PlinkoGame = ({ onScore, lastDrop })=>{
             ref: canvasRef
         }, void 0, false, {
             fileName: "[project]/PLINKO/components/PlinkoGame.tsx",
-            lineNumber: 659,
+            lineNumber: 660,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/PLINKO/components/PlinkoGame.tsx",
-        lineNumber: 655,
+        lineNumber: 656,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -3425,6 +3425,7 @@ const Home = ()=>{
     const [remainingBalls, setRemainingBalls] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(0);
     const [isMobile, setIsMobile] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [winLossBadge, setWinLossBadge] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [soundEnabled, setSoundEnabled] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     const lastRiskRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])('GREEN');
     const historyIdCounter = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
     // AutoPlay state tracking
@@ -3647,77 +3648,125 @@ const Home = ()=>{
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$MainNav$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 241,
+                lineNumber: 242,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
-                className: "flex justify-between items-center px-2 py-1 z-30 mt-[45px]",
+                className: "flex justify-between items-start px-2 py-1 z-30 mt-[45px]",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex items-center gap-1 max-w-[60%] overflow-hidden",
+                        className: "flex flex-col gap-1 max-w-[60%]",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                onClick: ()=>setShowExtendedHistory(true),
-                                className: "w-8 h-8 rounded-full bg-gradient-to-b from-gray-500 via-gray-600 to-gray-800 border-b-4 border-gray-900 shadow-xl shadow-gray-900/80 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75 text-white flex items-center justify-center flex-shrink-0",
-                                title: "View extended history",
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("i", {
-                                    className: "fas fa-history text-xs"
-                                }, void 0, false, {
-                                    fileName: "[project]/PLINKO/app/page.tsx",
-                                    lineNumber: 252,
-                                    columnNumber: 13
-                                }, ("TURBOPACK compile-time value", void 0))
-                            }, void 0, false, {
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "flex items-center gap-1 overflow-hidden",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: ()=>setShowExtendedHistory(true),
+                                        className: "w-8 h-8 rounded-full bg-gradient-to-b from-gray-500 via-gray-600 to-gray-800 border-b-4 border-gray-900 shadow-xl shadow-gray-900/80 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75 text-white flex items-center justify-center flex-shrink-0",
+                                        title: "View extended history",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("i", {
+                                            className: "fas fa-history text-xs"
+                                        }, void 0, false, {
+                                            fileName: "[project]/PLINKO/app/page.tsx",
+                                            lineNumber: 255,
+                                            columnNumber: 15
+                                        }, ("TURBOPACK compile-time value", void 0))
+                                    }, void 0, false, {
+                                        fileName: "[project]/PLINKO/app/page.tsx",
+                                        lineNumber: 250,
+                                        columnNumber: 13
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex gap-0.5 overflow-x-auto no-scrollbar scroll-smooth",
+                                        children: history.length > 0 ? history.slice(0, 6).map((item, index)=>{
+                                            // Determine color based on risk level and multiplier
+                                            let bgColor = '';
+                                            const isDark = item.multiplier < 1;
+                                            if (item.risk === 'GREEN') {
+                                                bgColor = isDark ? 'bg-[rgb(100,140,45)]' : 'bg-[rgb(140,185,60)]';
+                                            } else if (item.risk === 'YELLOW') {
+                                                bgColor = isDark ? 'bg-[rgb(20,100,200)]' : 'bg-[rgb(30,144,255)]';
+                                            } else if (item.risk === 'RED') {
+                                                bgColor = isDark ? 'bg-[rgb(160,35,35)]' : 'bg-[rgb(210,50,50)]';
+                                            }
+                                            // Responsive visibility classes
+                                            let visibilityClass = '';
+                                            if (index >= 5) visibilityClass = 'hidden lg:block'; // 6th item: lg only
+                                            else if (index >= 3) visibilityClass = 'hidden md:block'; // 4th-5th items: md and lg
+                                            // Items 0-2: always visible
+                                            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: `${index === 0 ? 'history-item-enter' : ''} ${visibilityClass} px-2 py-1 text-[11px] font-black min-w-fit text-white transition-all duration-300`,
+                                                children: [
+                                                    item.multiplier,
+                                                    "x"
+                                                ]
+                                            }, item.id, true, {
+                                                fileName: "[project]/PLINKO/app/page.tsx",
+                                                lineNumber: 278,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0));
+                                        }) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "text-[11px] text-white/60 font-bold uppercase tracking-widest px-1 italic",
+                                            children: "Waiting for results..."
+                                        }, void 0, false, {
+                                            fileName: "[project]/PLINKO/app/page.tsx",
+                                            lineNumber: 286,
+                                            columnNumber: 15
+                                        }, ("TURBOPACK compile-time value", void 0))
+                                    }, void 0, false, {
+                                        fileName: "[project]/PLINKO/app/page.tsx",
+                                        lineNumber: 257,
+                                        columnNumber: 13
+                                    }, ("TURBOPACK compile-time value", void 0))
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                lineNumber: 247,
+                                lineNumber: 249,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "flex gap-0.5 overflow-x-auto no-scrollbar scroll-smooth",
-                                children: history.length > 0 ? history.slice(0, 6).map((item, index)=>{
-                                    // Determine color based on risk level and multiplier
-                                    let bgColor = '';
-                                    const isDark = item.multiplier < 1;
-                                    if (item.risk === 'GREEN') {
-                                        bgColor = isDark ? 'bg-[rgb(100,140,45)]' : 'bg-[rgb(140,185,60)]';
-                                    } else if (item.risk === 'YELLOW') {
-                                        bgColor = isDark ? 'bg-[rgb(20,100,200)]' : 'bg-[rgb(30,144,255)]';
-                                    } else if (item.risk === 'RED') {
-                                        bgColor = isDark ? 'bg-[rgb(160,35,35)]' : 'bg-[rgb(210,50,50)]';
-                                    }
-                                    // Responsive visibility classes
-                                    let visibilityClass = '';
-                                    if (index >= 5) visibilityClass = 'hidden lg:block'; // 6th item: lg only
-                                    else if (index >= 3) visibilityClass = 'hidden md:block'; // 4th-5th items: md and lg
-                                    // Items 0-2: always visible
-                                    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: `${index === 0 ? 'history-item-enter' : ''} ${visibilityClass} px-2 py-1 text-[11px] font-black min-w-fit text-white transition-all duration-300`,
-                                        children: [
-                                            item.multiplier,
-                                            "x"
-                                        ]
-                                    }, item.id, true, {
+                                className: "flex items-center gap-2 pl-1",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: ()=>setSoundEnabled(!soundEnabled),
+                                        className: `relative w-12 h-6 rounded-full transition-all duration-300 ${soundEnabled ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-gray-600 to-gray-700'} shadow-lg`,
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: `absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-all duration-300 flex items-center justify-center ${soundEnabled ? 'left-[26px]' : 'left-0.5'}`,
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("i", {
+                                                className: `fas ${soundEnabled ? 'fa-volume-up' : 'fa-volume-mute'} text-[8px] ${soundEnabled ? 'text-green-600' : 'text-gray-600'}`
+                                            }, void 0, false, {
+                                                fileName: "[project]/PLINKO/app/page.tsx",
+                                                lineNumber: 306,
+                                                columnNumber: 17
+                                            }, ("TURBOPACK compile-time value", void 0))
+                                        }, void 0, false, {
+                                            fileName: "[project]/PLINKO/app/page.tsx",
+                                            lineNumber: 301,
+                                            columnNumber: 15
+                                        }, ("TURBOPACK compile-time value", void 0))
+                                    }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 275,
-                                        columnNumber: 17
-                                    }, ("TURBOPACK compile-time value", void 0));
-                                }) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "text-[11px] text-white/60 font-bold uppercase tracking-widest px-1 italic",
-                                    children: "Waiting for results..."
-                                }, void 0, false, {
-                                    fileName: "[project]/PLINKO/app/page.tsx",
-                                    lineNumber: 283,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0))
-                            }, void 0, false, {
+                                        lineNumber: 293,
+                                        columnNumber: 13
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "text-white text-[9px] font-bold uppercase tracking-wide",
+                                        children: soundEnabled ? 'On' : 'Off'
+                                    }, void 0, false, {
+                                        fileName: "[project]/PLINKO/app/page.tsx",
+                                        lineNumber: 309,
+                                        columnNumber: 13
+                                    }, ("TURBOPACK compile-time value", void 0))
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                lineNumber: 254,
+                                lineNumber: 292,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/PLINKO/app/page.tsx",
-                        lineNumber: 246,
+                        lineNumber: 247,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3731,7 +3780,7 @@ const Home = ()=>{
                                 ]
                             }, winLossBadge.key, true, {
                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                lineNumber: 292,
+                                lineNumber: 319,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3745,7 +3794,7 @@ const Home = ()=>{
                                         })
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 306,
+                                        lineNumber: 333,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3753,49 +3802,50 @@ const Home = ()=>{
                                         children: "USD"
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 309,
+                                        lineNumber: 336,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                lineNumber: 305,
+                                lineNumber: 332,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/PLINKO/app/page.tsx",
-                        lineNumber: 289,
+                        lineNumber: 316,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 244,
+                lineNumber: 245,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
-                className: "flex-1 flex flex-col gap-1 p-1 pb-1 overflow-hidden",
+                className: "flex-1 flex flex-col gap-1 p-1 pb-20 sm:pb-1 overflow-hidden",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex-1 w-full flex justify-center items-start bg-black/5 rounded-lg border border-black/10 shadow-inner pt-1 overflow-auto",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$PlinkoGame$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                             onScore: handleScore,
-                            lastDrop: lastDrop
+                            lastDrop: lastDrop,
+                            soundEnabled: soundEnabled
                         }, void 0, false, {
                             fileName: "[project]/PLINKO/app/page.tsx",
-                            lineNumber: 318,
+                            lineNumber: 345,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     }, void 0, false, {
                         fileName: "[project]/PLINKO/app/page.tsx",
-                        lineNumber: 317,
+                        lineNumber: 344,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex-shrink-0 bg-black/20 rounded-2xl",
                         style: {
-                            backgroundColor: 'rgba(100, 95, 158, 0.64)'
+                            backgroundColor: 'rgba(162, 214, 236, 0.71)'
                         },
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3812,26 +3862,26 @@ const Home = ()=>{
                                                     children: "Bet USD"
                                                 }, void 0, false, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 339,
+                                                    lineNumber: 367,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "text-white font-bold text-lg font-mono",
+                                                    className: "text-white font-bold text-lg font-poppins",
                                                     children: wager.toFixed(2)
                                                 }, void 0, false, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 340,
+                                                    lineNumber: 368,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/PLINKO/app/page.tsx",
-                                            lineNumber: 338,
+                                            lineNumber: 366,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 334,
+                                        lineNumber: 362,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3847,7 +3897,7 @@ const Home = ()=>{
                                                 children: "−"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 346,
+                                                lineNumber: 374,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3857,12 +3907,12 @@ const Home = ()=>{
                                                     className: "fas fa-layer-group text-sm"
                                                 }, void 0, false, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 360,
+                                                    lineNumber: 388,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 356,
+                                                lineNumber: 384,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3875,40 +3925,40 @@ const Home = ()=>{
                                                 children: "+"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 362,
+                                                lineNumber: 390,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 345,
+                                        lineNumber: 373,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>dropBall('GREEN'),
-                                        className: "h-12 px-6 rounded-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-green-800 hover:from-green-300 hover:via-green-400 hover:to-green-600 hover:shadow-gray-900/90 hover:border-green-700 active:shadow-inner active:shadow-gray-900/60 active:border-green-900 active:scale-95 transition-all duration-75 uppercase tracking-wider",
+                                        className: "h-10 px-6 rounded-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-green-800 hover:from-green-300 hover:via-green-400 hover:to-green-600 hover:shadow-gray-900/90 hover:border-green-700 active:shadow-inner active:shadow-gray-900/60 active:border-green-900 active:scale-95 transition-all duration-75 uppercase tracking-wider",
                                         children: "GREEN"
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 375,
+                                        lineNumber: 403,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>dropBall('YELLOW'),
-                                        className: "h-12 px-6 rounded-full bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-blue-800 hover:from-blue-300 hover:via-blue-400 hover:to-blue-600 hover:shadow-gray-900/90 hover:border-blue-700 active:shadow-inner active:shadow-gray-900/60 active:border-blue-900 active:scale-95 transition-all duration-75 uppercase tracking-wider",
+                                        className: "h-10 px-6 rounded-full bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-blue-800 hover:from-blue-300 hover:via-blue-400 hover:to-blue-600 hover:shadow-gray-900/90 hover:border-blue-700 active:shadow-inner active:shadow-gray-900/60 active:border-blue-900 active:scale-95 transition-all duration-75 uppercase tracking-wider",
                                         children: "BLUE"
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 381,
+                                        lineNumber: 409,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>dropBall('RED'),
-                                        className: "h-12 px-6 rounded-full bg-gradient-to-b from-red-400 via-red-500 to-red-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-red-800 hover:from-red-300 hover:via-red-400 hover:to-red-600 hover:shadow-gray-900/90 hover:border-red-700 active:shadow-inner active:shadow-gray-900/60 active:border-red-900 active:scale-95 transition-all duration-75 uppercase tracking-wider",
+                                        className: "h-10 px-6 rounded-full bg-gradient-to-b from-red-400 via-red-500 to-red-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-red-800 hover:from-red-300 hover:via-red-400 hover:to-red-600 hover:shadow-gray-900/90 hover:border-red-700 active:shadow-inner active:shadow-gray-900/60 active:border-red-900 active:scale-95 transition-all duration-75 uppercase tracking-wider",
                                         children: "RED"
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 387,
+                                        lineNumber: 415,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3926,57 +3976,57 @@ const Home = ()=>{
                                             children: remainingBalls
                                         }, void 0, false, {
                                             fileName: "[project]/PLINKO/app/page.tsx",
-                                            lineNumber: 411,
+                                            lineNumber: 439,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("i", {
                                             className: "fas fa-sync-alt text-lg"
                                         }, void 0, false, {
                                             fileName: "[project]/PLINKO/app/page.tsx",
-                                            lineNumber: 413,
+                                            lineNumber: 441,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 395,
+                                        lineNumber: 423,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                lineNumber: 332,
+                                lineNumber: 360,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "sm:hidden flex flex-col gap-1 p-1",
+                                className: "sm:hidden flex flex-col gap-2 p-1",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "flex items-center justify-center gap-2",
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                 onClick: ()=>dropBall('GREEN'),
-                                                className: "h-12 px-6 rounded-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-green-800 hover:from-green-300 hover:via-green-400 hover:to-green-600 hover:shadow-gray-900/90 hover:border-green-700 active:shadow-inner active:shadow-gray-900/60 active:border-green-900 active:scale-95 transition-all duration-75 uppercase tracking-wider",
+                                                className: "h-10 px-6 rounded-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 text-white font-bold text-md shadow-xl shadow-gray-900/80 border-b-4 border-green-800 hover:from-green-300 hover:via-green-400 hover:to-green-600 hover:shadow-gray-900/90 hover:border-green-700 active:shadow-inner active:shadow-gray-900/60 active:border-green-900 active:scale-95 transition-all duration-75 uppercase tracking-wider",
                                                 children: "GREEN"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 422,
+                                                lineNumber: 450,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                 onClick: ()=>dropBall('YELLOW'),
-                                                className: "h-12 px-6 rounded-full bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-blue-800 hover:from-blue-300 hover:via-blue-400 hover:to-blue-600 hover:shadow-gray-900/90 hover:border-blue-700 active:shadow-inner active:shadow-gray-900/60 active:border-blue-900 active:scale-95 transition-all duration-75 uppercase tracking-wider",
-                                                children: "YELLOW"
+                                                className: "h-10 px-6 rounded-full bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 text-white font-bold text-md shadow-xl shadow-gray-900/80 border-b-4 border-blue-800 hover:from-blue-300 hover:via-blue-400 hover:to-blue-600 hover:shadow-gray-900/90 hover:border-blue-700 active:shadow-inner active:shadow-gray-900/60 active:border-blue-900 active:scale-95 transition-all duration-75 uppercase tracking-wider",
+                                                children: "BLUE"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 428,
+                                                lineNumber: 456,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                 onClick: ()=>dropBall('RED'),
-                                                className: "h-12 px-6 rounded-full bg-gradient-to-b from-red-400 via-red-500 to-red-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-red-800 hover:from-red-300 hover:via-red-400 hover:to-red-600 hover:shadow-gray-900/90 hover:border-red-700 active:shadow-inner active:shadow-gray-900/60 active:border-red-900 active:scale-95 transition-all duration-75 uppercase tracking-wider",
+                                                className: "h-10 px-6 rounded-full bg-gradient-to-b from-red-400 via-red-500 to-red-700 text-white font-bold text-md shadow-xl shadow-gray-900/80 border-b-4 border-red-800 hover:from-red-300 hover:via-red-400 hover:to-red-600 hover:shadow-gray-900/90 hover:border-red-700 active:shadow-inner active:shadow-gray-900/60 active:border-red-900 active:scale-95 transition-all duration-75 uppercase tracking-wider",
                                                 children: "RED"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 434,
+                                                lineNumber: 462,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3994,60 +4044,60 @@ const Home = ()=>{
                                                     children: remainingBalls
                                                 }, void 0, false, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 458,
+                                                    lineNumber: 486,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("i", {
                                                     className: "fas fa-sync-alt text-lg"
                                                 }, void 0, false, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 460,
+                                                    lineNumber: 488,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 442,
+                                                lineNumber: 470,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 421,
+                                        lineNumber: 449,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "flex items-center justify-center gap-2",
+                                        className: "flex items-center justify-center gap-4",
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                 onClick: ()=>setShowCustomAmountModal(true),
-                                                className: "bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 rounded-full px-5 py-1.5 shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 flex-1 max-w-[180px] hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75",
+                                                className: "bg-gradient-to-b from-slate-900 via-slate-600 to-slate-800 rounded-full px-5 py-0 shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 flex-1 max-w-[180px] hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75",
                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "text-center",
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                            className: "text-white/60 text-[8px] font-medium uppercase",
+                                                            className: "text-green-500 text-[10px] font-medium uppercase",
                                                             children: "Bet USD"
                                                         }, void 0, false, {
                                                             fileName: "[project]/PLINKO/app/page.tsx",
-                                                            lineNumber: 472,
+                                                            lineNumber: 500,
                                                             columnNumber: 19
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                            className: "text-white font-bold text-base font-mono",
+                                                            className: "text-white font-bold text-lg font-poppinsxf",
                                                             children: wager.toFixed(2)
                                                         }, void 0, false, {
                                                             fileName: "[project]/PLINKO/app/page.tsx",
-                                                            lineNumber: 473,
+                                                            lineNumber: 501,
                                                             columnNumber: 19
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 471,
+                                                    lineNumber: 499,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 467,
+                                                lineNumber: 495,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4056,11 +4106,11 @@ const Home = ()=>{
                                                 onMouseLeave: stopAdjusting,
                                                 onTouchStart: ()=>startAdjusting(-0.1),
                                                 onTouchEnd: stopAdjusting,
-                                                className: "w-11 h-11 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white font-bold text-xl shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75",
+                                                className: "w-8 h-8 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white font-bold text-xl shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75",
                                                 children: "−"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 477,
+                                                lineNumber: 505,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4070,12 +4120,12 @@ const Home = ()=>{
                                                     className: "fas fa-layer-group text-sm"
                                                 }, void 0, false, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 491,
+                                                    lineNumber: 519,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 487,
+                                                lineNumber: 515,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4084,35 +4134,35 @@ const Home = ()=>{
                                                 onMouseLeave: stopAdjusting,
                                                 onTouchStart: ()=>startAdjusting(0.1),
                                                 onTouchEnd: stopAdjusting,
-                                                className: "w-11 h-11 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white font-bold text-xl shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75",
+                                                className: "w-8 h-8 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white font-bold text-xl shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75",
                                                 children: "+"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 493,
+                                                lineNumber: 521,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 466,
+                                        lineNumber: 494,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                lineNumber: 419,
+                                lineNumber: 447,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/PLINKO/app/page.tsx",
-                        lineNumber: 325,
+                        lineNumber: 353,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 315,
+                lineNumber: 342,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$AutoPlayModal$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -4122,7 +4172,7 @@ const Home = ()=>{
                 currentBalance: gameState.balance
             }, void 0, false, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 509,
+                lineNumber: 537,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$PresetAmountsModal$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -4131,7 +4181,7 @@ const Home = ()=>{
                 onSelectAmount: setWager
             }, void 0, false, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 517,
+                lineNumber: 545,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ExtendedHistoryModal$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -4140,7 +4190,7 @@ const Home = ()=>{
                 history: history
             }, void 0, false, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 524,
+                lineNumber: 552,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$CustomAmountModal$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -4150,17 +4200,17 @@ const Home = ()=>{
                 currentAmount: wager
             }, void 0, false, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 531,
+                lineNumber: 559,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/PLINKO/app/page.tsx",
-        lineNumber: 229,
+        lineNumber: 230,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
-_s(Home, "Z9t9IrrsmWa3BSlR6gFNjmDcPgQ=");
+_s(Home, "+zpZf1/plVGchjDsPeGT34KHf0c=");
 _c = Home;
 const __TURBOPACK__default__export__ = Home;
 var _c;
