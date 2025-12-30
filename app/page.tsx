@@ -339,7 +339,7 @@ const Home: React.FC = () => {
       </header>
 
       {/* MAIN CONTENT - Single column layout */}
-      <main className="flex-1 flex flex-col gap-1 p-1 pb-20 sm:pb-1 overflow-hidden">
+      <main className="flex-1 flex flex-col gap-1 p-1 pb-40 sm:pb-1 overflow-hidden">
         {/* GAME BOARD */}
         <div className="flex-1 w-full flex justify-center items-start bg-black/5 rounded-lg border border-black/10 shadow-inner pt-1 overflow-auto">
           <PlinkoGame
