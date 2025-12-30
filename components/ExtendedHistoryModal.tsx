@@ -42,7 +42,15 @@ export default function ExtendedHistoryModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[360px] bg-gradient-to-b from-teal-700 to-teal-800 border-2 border-teal-600 p-3">
+      <DialogContent
+        className="sm:max-w-[400px] border-2 border-white p-3"
+        style={{
+          backgroundImage: `url("/ui/pg3.png")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
         <DialogHeader className="pb-2">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-sm font-bold text-white uppercase tracking-wide">Last Results</DialogTitle>
@@ -56,16 +64,16 @@ export default function ExtendedHistoryModal({
         </DialogHeader>
 
         <div className="overflow-y-auto max-h-[400px] pr-1 custom-scrollbar">
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-7 gap-1.5">
             {history.length > 0 ? history.map((item) => (
               <div
                 key={item.id}
-                className={`${getMultiplierColor(item)} rounded-lg px-2 py-1.5 text-center font-black text-xs shadow-[0_2px_4px_rgba(0,0,0,0.3)] border border-black/20 text-black transition-transform hover:scale-105`}
+                className={`${getMultiplierColor(item)} rounded-sm px-0 py-0 text-center font-black text-lg shadow-[0_2px_4px_rgba(0,0,0,0.3)] border border-white/40 text-white transition-transform hover:scale-105`}
               >
                 {item.multiplier}
               </div>
             )) : (
-              <div className="col-span-4 text-center text-white/60 py-4 text-xs">
+              <div className="col-span-4 text-center text-white py-4 text-sm">
                 No results yet
               </div>
             )}

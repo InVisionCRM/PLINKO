@@ -10,6 +10,81 @@ import CustomAmountModal from '../components/CustomAmountModal';
 import { GameState, RiskLevel } from '../types';
 import { COLORS } from '../constants';
 
+interface IntroScreenProps {
+  onComplete: () => void;
+}
+
+function IntroScreen({ onComplete }: IntroScreenProps) {
+  const [progress, setProgress] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const duration = 3000; // 3 seconds
+    const interval = 50; // Update every 50ms
+    const steps = duration / interval;
+    let currentStep = 0;
+
+    const progressInterval = setInterval(() => {
+      currentStep++;
+      const newProgress = (currentStep / steps) * 100;
+      setProgress(Math.min(newProgress, 100));
+
+      if (currentStep >= steps) {
+        clearInterval(progressInterval);
+        setTimeout(onComplete, 200); // Small delay after completion
+      }
+    }, interval);
+
+    // Start video playback
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {
+        // Video failed to play, continue with progress bar only
+      });
+    }
+
+    return () => clearInterval(progressInterval);
+  }, [onComplete]);
+
+  return (
+    <div className="fixed inset-0 bg-black flex flex-col items-center justify-center z-50">
+      {/* Video Background */}
+      <video
+        ref={videoRef}
+        className="absolute inset-0 w-full h-full object-cover"
+        muted
+        playsInline
+        preload="auto"
+      >
+        <source src="/ui/intro.mp4" type="video/mp4" />
+      </video>
+
+      {/* Overlay Content */}
+      <div className="relative z-10 flex flex-col justify-between h-full py-12">
+        {/* Empty top space */}
+        <div></div>
+
+        {/* Progress Bar at Bottom */}
+        <div className="w-80 max-w-sm mx-auto">
+          <div className="bg-white/20 rounded-full h-3 overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-full transition-all duration-75 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <div className="text-center mt-4">
+            <span className="text-white text-lg font-semibold">
+              Loading... {Math.round(progress)}%
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Vignette Effect */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none" />
+    </div>
+  );
+}
+
 interface AutoPlaySettings {
   riskLevel: RiskLevel;
   numberOfRounds: number;
@@ -37,7 +112,14 @@ const Home: React.FC = () => {
     ballCount: 0
   });
 
-  const [wager, setWager] = useState(0.30);
+  // Initialize wager from localStorage or default to $1
+  const [wager, setWager] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('plinko-wager');
+      return saved ? parseFloat(saved) : 1.00;
+    }
+    return 1.00;
+  });
   const [lastDrop, setLastDrop] = useState<{ id: number; risk: RiskLevel } | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [isAutoDrop, setIsAutoDrop] = useState(false);
@@ -50,6 +132,7 @@ const Home: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [winLossBadge, setWinLossBadge] = useState<{ amount: number; key: number } | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [showIntro, setShowIntro] = useState(true);
   const lastRiskRef = useRef<RiskLevel>('GREEN');
   const historyIdCounter = useRef(0);
 
@@ -57,6 +140,14 @@ const Home: React.FC = () => {
   const initialWagerRef = useRef(0.30);
   const startingBalanceRef = useRef(755.37);
   const lastWinAmountRef = useRef(0);
+  const currentWagerRef = useRef(1.00); // Track current wager for auto-play calculations
+  const isAutoDropRef = useRef(false); // Track auto-drop status synchronously
+  const autoPlaySettingsRef = useRef<AutoPlaySettings | null>(null); // Track settings synchronously
+
+  // Keep currentWagerRef in sync with wager state
+  useEffect(() => {
+    currentWagerRef.current = wager;
+  }, [wager]);
 
 
   const handleScore = useCallback((multiplier: number) => {
@@ -64,30 +155,51 @@ const Home: React.FC = () => {
     const profit = winAmount - wager;
     lastWinAmountRef.current = winAmount;
 
+    console.log('=== SCORE EVENT ===');
+    console.log('Multiplier:', multiplier);
+    console.log('Current Wager:', wager);
+    console.log('Is Auto Drop:', isAutoDrop);
+    console.log('Auto Play Settings:', autoPlaySettings);
+    console.log('Remaining Balls:', remainingBalls);
+    console.log('Game Balance:', gameState.balance);
+
     setGameState(prev => {
       const newBalance = prev.balance + winAmount;
 
       // Check AutoPlay stop conditions
-      if (isAutoDrop && autoPlaySettings) {
+      console.log('Auto-drop check:', isAutoDropRef.current, '&&', !!autoPlaySettingsRef.current, '=', isAutoDropRef.current && autoPlaySettingsRef.current);
+      if (isAutoDropRef.current && autoPlaySettingsRef.current) {
         // Stop if cash decreases by
-        if (autoPlaySettings.stopOnLossEnabled) {
-          const totalLoss = startingBalanceRef.current - newBalance;
-          if (totalLoss >= autoPlaySettings.stopOnLossAmount) {
-            setIsAutoDrop(false);
-            setRemainingBalls(0);
-          }
+      if (autoPlaySettingsRef.current!.stopOnLossEnabled) {
+        const totalLoss = startingBalanceRef.current - newBalance;
+        if (totalLoss >= autoPlaySettingsRef.current!.stopOnLossAmount) {
+          console.log('=== AUTO-DROP DISABLED: Loss condition met ===');
+          isAutoDropRef.current = false;
+          autoPlaySettingsRef.current = null;
+          setAutoPlaySettings(null);
+          setIsAutoDrop(false);
+          setRemainingBalls(0);
         }
+      }
 
         // Stop if single win exceeds
-        if (autoPlaySettings.stopOnBigWinEnabled && winAmount >= autoPlaySettings.stopOnBigWinAmount) {
+        if (autoPlaySettingsRef.current!.stopOnBigWinEnabled && winAmount >= autoPlaySettingsRef.current!.stopOnBigWinAmount) {
+          console.log('=== AUTO-DROP DISABLED: Big win condition met ===');
+          isAutoDropRef.current = false;
+          autoPlaySettingsRef.current = null;
+          setAutoPlaySettings(null);
           setIsAutoDrop(false);
           setRemainingBalls(0);
         }
 
         // Stop if cash increases by
-        if (autoPlaySettings.stopOnProfitEnabled) {
+        if (autoPlaySettingsRef.current!.stopOnProfitEnabled) {
           const totalProfit = newBalance - startingBalanceRef.current;
-          if (totalProfit >= autoPlaySettings.stopOnProfitAmount) {
+          if (totalProfit >= autoPlaySettingsRef.current!.stopOnProfitAmount) {
+            console.log('=== AUTO-DROP DISABLED: Profit condition met ===');
+            isAutoDropRef.current = false;
+            autoPlaySettingsRef.current = null;
+            setAutoPlaySettings(null);
             setIsAutoDrop(false);
             setRemainingBalls(0);
           }
@@ -95,15 +207,36 @@ const Home: React.FC = () => {
 
         // Apply bet progression strategy
         const isWin = multiplier > 1;
-        const strategy = isWin ? autoPlaySettings.onWinStrategy : autoPlaySettings.onLossStrategy;
-        const percent = isWin ? autoPlaySettings.onWinPercent : autoPlaySettings.onLossPercent;
+        const strategy = isWin ? autoPlaySettingsRef.current!.onWinStrategy : autoPlaySettingsRef.current!.onLossStrategy;
+        const percent = isWin ? autoPlaySettingsRef.current!.onWinPercent : autoPlaySettingsRef.current!.onLossPercent;
+
+        console.log('Win/Loss:', isWin ? 'WIN' : 'LOSS');
+        console.log('Strategy:', strategy);
+        console.log('Percent:', percent);
+        console.log('*** APPLYING WAGER STRATEGY ***');
+        console.log('currentWagerRef.current:', currentWagerRef.current);
+        console.log('wager state:', wager);
+
+        // Use currentWagerRef to get the most up-to-date wager value
+        let currentWager = currentWagerRef.current || wager;
+        console.log('Using currentWager:', currentWager);
+        let newWager = currentWager;
 
         if (strategy === 'reset') {
-          setWager(initialWagerRef.current);
+          newWager = initialWagerRef.current;
+          console.log('Resetting bet to initial:', newWager);
         } else if (strategy === 'increase') {
-          setWager(prev => +(prev * (1 + percent / 100)).toFixed(2));
+          newWager = +(currentWager * (1 + percent / 100)).toFixed(2);
+          console.log('Increasing bet from', currentWager, 'to', newWager);
         } else if (strategy === 'decrease') {
-          setWager(prev => Math.max(0.1, +(prev * (1 - percent / 100)).toFixed(2)));
+          newWager = Math.max(0.1, +(currentWager * (1 - percent / 100)).toFixed(2));
+          console.log('Decreasing bet from', currentWager, 'to', newWager);
+        }
+
+        // Update wager immediately
+        if (newWager !== currentWager) {
+          console.log('*** UPDATING WAGER FROM', currentWager, 'TO', newWager, '***');
+          setWagerWithPersistence(newWager);
         }
       }
 
@@ -134,6 +267,9 @@ const Home: React.FC = () => {
   const dropBall = useCallback((risk: RiskLevel) => {
     setGameState(prev => {
       if (prev.balance < wager) {
+        isAutoDropRef.current = false;
+        autoPlaySettingsRef.current = null;
+        setAutoPlaySettings(null);
         setIsAutoDrop(false);
         return prev;
       }
@@ -149,11 +285,18 @@ const Home: React.FC = () => {
 
   // AutoPlay handler
   const handleStartAutoPlay = useCallback((settings: AutoPlaySettings) => {
+    console.log('=== STARTING AUTO-PLAY ===');
+    console.log('Settings:', settings);
+    console.log('Initial Wager:', wager);
+    console.log('Initial Balance:', gameState.balance);
+    autoPlaySettingsRef.current = settings; // Set ref synchronously
     setAutoPlaySettings(settings);
     setRemainingBalls(settings.numberOfRounds);
     initialWagerRef.current = wager;
     startingBalanceRef.current = gameState.balance;
+    isAutoDropRef.current = true; // Set ref synchronously
     setIsAutoDrop(true);
+    console.log('Auto-drop enabled');
   }, [wager, gameState.balance]);
 
   // Auto Drop Logic
@@ -165,6 +308,10 @@ const Home: React.FC = () => {
         setRemainingBalls(prev => {
           const newCount = prev - 1;
           if (newCount <= 0) {
+            console.log('=== AUTO-DROP DISABLED: All balls completed ===');
+            isAutoDropRef.current = false;
+            autoPlaySettingsRef.current = null;
+            setAutoPlaySettings(null);
             setIsAutoDrop(false);
             setRemainingBalls(0);
           }
@@ -190,7 +337,20 @@ const Home: React.FC = () => {
   }, []);
 
   const adjustWager = (amount: number) => {
-    setWager(prev => Math.max(0.1, +(prev + amount).toFixed(2)));
+    setWagerWithPersistence(prev => Math.max(0.1, +(prev + amount).toFixed(2)));
+  };
+
+  // Helper to set wager with localStorage persistence
+  const setWagerWithPersistence = (newWager: number | ((prev: number) => number)) => {
+    setWager(prev => {
+      const newValue = typeof newWager === 'function' ? newWager(prev) : newWager;
+      // Update ref synchronously for immediate access
+      currentWagerRef.current = newValue;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('plinko-wager', newValue.toString());
+      }
+      return newValue;
+    });
   };
 
   // Hold-to-repeat functionality for wager buttons
@@ -225,6 +385,11 @@ const Home: React.FC = () => {
       stopAdjusting();
     };
   }, []);
+
+  // Show intro screen first
+  if (showIntro) {
+    return <IntroScreen onComplete={() => setShowIntro(false)} />;
+  }
 
   return (
     <div
@@ -292,7 +457,7 @@ const Home: React.FC = () => {
           <div className="flex items-center gap-2 pl-1">
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className={`relative w-12 h-6 rounded-full transition-all duration-300 ${
+              className={`relative w-12 h-6 top-4 rounded-full transition-all duration-300 ${
                 soundEnabled
                   ? 'bg-gradient-to-r from-green-500 to-green-600'
                   : 'bg-gradient-to-r from-gray-600 to-gray-700'
@@ -346,6 +511,7 @@ const Home: React.FC = () => {
             onScore={handleScore}
             lastDrop={lastDrop}
             soundEnabled={soundEnabled}
+            isAutoDrop={isAutoDrop}
           />
         </div>
 
@@ -353,7 +519,7 @@ const Home: React.FC = () => {
         <div
           className="flex-shrink-0 bg-black/20 rounded-2xl"
           style={{
-            backgroundColor: 'rgba(162, 214, 236, 0.71)'
+            backgroundColor: 'rgba(45, 12, 40, 0.65)'
           }}
         >
           {/* Desktop Layout - Single Row */}
@@ -423,6 +589,9 @@ const Home: React.FC = () => {
             <button
               onClick={() => {
                 if (isAutoDrop) {
+                  isAutoDropRef.current = false;
+                  autoPlaySettingsRef.current = null;
+                  setAutoPlaySettings(null);
                   setIsAutoDrop(false);
                   setRemainingBalls(0);
                 } else {
@@ -545,7 +714,7 @@ const Home: React.FC = () => {
       <PresetAmountsModal
         open={showPresetModal}
         onOpenChange={setShowPresetModal}
-        onSelectAmount={setWager}
+        onSelectAmount={setWagerWithPersistence}
       />
 
       {/* Extended History Modal */}
@@ -559,7 +728,7 @@ const Home: React.FC = () => {
       <CustomAmountModal
         open={showCustomAmountModal}
         onOpenChange={setShowCustomAmountModal}
-        onSetAmount={setWager}
+        onSetAmount={setWagerWithPersistence}
         currentAmount={wager}
       />
     </div>

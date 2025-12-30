@@ -23,18 +23,18 @@ export const COLORS = {
 // --- TUNABLE PHYSICS SETTINGS ---
 export const PHYSICS = {
   GRAVITY: 1,               // Strength of downward pull (snappier)
-  ENGINE_ITERATIONS: 9,      // Accuracy of simulation
+  ENGINE_ITERATIONS: 25,      // Accuracy of simulation
   
   BALL_DENSITY: 0.05,          // Heavier ball
   BALL_RESTITUTION: 1.1,     // Lower bounciness for more realistic thuds
   BALL_FRICTION: 0.005,       // Very low sliding friction
-  BALL_FRICTION_STATIC: 0.05, 
+  BALL_FRICTION_STATIC: 0.005, 
   BALL_FRICTION_AIR: 0.05,   // Minimal air resistance
   
   PEG_RESTITUTION: 2,       // Peg bounciness
   PEG_FRICTION: 0,         
   
-  SPAWN_RANGE_X: 4,           // Narrower spread since it's "coming out of a hole"
+  SPAWN_RANGE_X: 3,           // Narrower spread since it's "coming out of a hole"
   INITIAL_V_X_VARIANCE: 0.8,  
   INITIAL_V_Y: 0,             // Higher initial push to prevent snagging on the first peg
   

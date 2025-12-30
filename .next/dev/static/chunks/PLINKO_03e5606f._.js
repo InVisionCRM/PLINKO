@@ -40,15 +40,15 @@ const COLORS = {
 };
 const PHYSICS = {
     GRAVITY: 1,
-    ENGINE_ITERATIONS: 9,
+    ENGINE_ITERATIONS: 25,
     BALL_DENSITY: 0.05,
     BALL_RESTITUTION: 1.1,
     BALL_FRICTION: 0.005,
-    BALL_FRICTION_STATIC: 0.05,
+    BALL_FRICTION_STATIC: 0.005,
     BALL_FRICTION_AIR: 0.05,
     PEG_RESTITUTION: 2,
     PEG_FRICTION: 0,
-    SPAWN_RANGE_X: 4,
+    SPAWN_RANGE_X: 3,
     INITIAL_V_X_VARIANCE: 0.8,
     INITIAL_V_Y: 0,
     COLLISION_JITTER: 1.5,
@@ -153,7 +153,7 @@ const COLLISION_CATEGORIES = {
     BUCKET: 0x0004,
     WALL: 0x0008 // Category for walls (if any)
 };
-const PlinkoGame = ({ onScore, lastDrop, soundEnabled })=>{
+const PlinkoGame = ({ onScore, lastDrop, soundEnabled, isAutoDrop })=>{
     _s();
     const containerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const canvasRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
@@ -785,11 +785,14 @@ const PlinkoGame = ({ onScore, lastDrop, soundEnabled })=>{
                 y: __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$constants$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["PHYSICS"].INITIAL_V_Y
             });
             __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$matter$2d$js$2f$build$2f$matter$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].World.add(engineRef.current.world, ball);
-            // Play drop sound when ball is released
-            playDropSound();
+            // Play drop sound when ball is released (but not during auto-drop)
+            if (!isAutoDrop) {
+                playDropSound();
+            }
         }
     }["PlinkoGame.useEffect"], [
-        lastDrop
+        lastDrop,
+        isAutoDrop
     ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         ref: containerRef,
@@ -798,12 +801,12 @@ const PlinkoGame = ({ onScore, lastDrop, soundEnabled })=>{
             ref: canvasRef
         }, void 0, false, {
             fileName: "[project]/PLINKO/components/PlinkoGame.tsx",
-            lineNumber: 682,
+            lineNumber: 685,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/PLINKO/components/PlinkoGame.tsx",
-        lineNumber: 678,
+        lineNumber: 681,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -1983,1021 +1986,11 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }
 }),
-"[project]/PLINKO/components/AutoPlayModal.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
-"use strict";
+"[project]/PLINKO/components/AutoPlayModal.tsx [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
 
-__turbopack_context__.s([
-    "default",
-    ()=>AutoPlayModal
-]);
-var __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/PLINKO/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/PLINKO/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/PLINKO/components/ui/dialog.tsx [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/PLINKO/components/ui/button.tsx [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/PLINKO/components/ui/label.tsx [app-client] (ecmascript)");
-;
-var _s = __turbopack_context__.k.signature();
-'use client';
-;
-;
-;
-;
-function AutoPlayModal({ open, onOpenChange, onStart, currentBalance }) {
-    _s();
-    const [showMoreOptions, setShowMoreOptions] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [settings, setSettings] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
-        riskLevel: 'GREEN',
-        numberOfRounds: 10,
-        stopOnLossEnabled: false,
-        stopOnLossAmount: 0,
-        stopOnBigWinEnabled: false,
-        stopOnBigWinAmount: 0,
-        stopOnProfitEnabled: false,
-        stopOnProfitAmount: 0,
-        onLossStrategy: 'reset',
-        onLossPercent: 0,
-        onWinStrategy: 'reset',
-        onWinPercent: 0
-    });
-    const roundOptions = [
-        3,
-        10,
-        25,
-        100,
-        200,
-        500
-    ];
-    const updateSetting = (key, value)=>{
-        setSettings((prev)=>({
-                ...prev,
-                [key]: value
-            }));
-    };
-    const adjustValue = (key, delta)=>{
-        setSettings((prev)=>({
-                ...prev,
-                [key]: Math.max(0, prev[key] + delta)
-            }));
-    };
-    const handleStart = ()=>{
-        onStart(settings);
-        onOpenChange(false);
-    };
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Dialog"], {
-        open: open,
-        onOpenChange: onOpenChange,
-        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogContent"], {
-            className: "sm:max-w-[600px] bg-gray-900 border-gray-700 max-h-[90vh] overflow-y-auto",
-            children: [
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogHeader"], {
-                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogTitle"], {
-                        className: "text-2xl font-bold text-white flex items-center justify-between",
-                        children: "AUTO PLAY"
-                    }, void 0, false, {
-                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                        lineNumber: 75,
-                        columnNumber: 11
-                    }, this)
-                }, void 0, false, {
-                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                    lineNumber: 74,
-                    columnNumber: 9
-                }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "space-y-6 py-4",
-                    children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
-                                    className: "text-gray-400 text-sm mb-3 block",
-                                    children: "Bet color"
-                                }, void 0, false, {
-                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                    lineNumber: 83,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "grid grid-cols-2 gap-3",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                            onClick: ()=>updateSetting('riskLevel', 'GREEN'),
-                                            className: `p-4 rounded-lg flex items-center gap-3 transition-all ${settings.riskLevel === 'GREEN' ? 'bg-gray-700 ring-2 ring-green-500' : 'bg-gray-800 hover:bg-gray-700'}`,
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: `w-3 h-3 rounded-full ${settings.riskLevel === 'GREEN' ? 'bg-green-500' : 'bg-gray-600'}`
-                                                }, void 0, false, {
-                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                    lineNumber: 93,
-                                                    columnNumber: 17
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "text-white font-medium flex items-center gap-2",
-                                                    children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                            className: "w-3 h-3 bg-green-500 rounded-full"
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                            lineNumber: 95,
-                                                            columnNumber: 19
-                                                        }, this),
-                                                        "Green"
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                    lineNumber: 94,
-                                                    columnNumber: 17
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                            lineNumber: 85,
-                                            columnNumber: 15
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                            onClick: ()=>updateSetting('riskLevel', 'YELLOW'),
-                                            className: `p-4 rounded-lg flex items-center gap-3 transition-all ${settings.riskLevel === 'YELLOW' ? 'bg-gray-700 ring-2 ring-yellow-500' : 'bg-gray-800 hover:bg-gray-700'}`,
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: `w-3 h-3 rounded-full ${settings.riskLevel === 'YELLOW' ? 'bg-yellow-500' : 'bg-gray-600'}`
-                                                }, void 0, false, {
-                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                    lineNumber: 107,
-                                                    columnNumber: 17
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "text-white font-medium flex items-center gap-2",
-                                                    children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                            className: "w-3 h-3 bg-yellow-500 rounded-full"
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                            lineNumber: 109,
-                                                            columnNumber: 19
-                                                        }, this),
-                                                        "Yellow"
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                    lineNumber: 108,
-                                                    columnNumber: 17
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                            lineNumber: 99,
-                                            columnNumber: 15
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                    lineNumber: 84,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    onClick: ()=>updateSetting('riskLevel', 'RED'),
-                                    className: `w-full mt-3 p-4 rounded-lg flex items-center gap-3 transition-all ${settings.riskLevel === 'RED' ? 'bg-gray-700 ring-2 ring-red-500' : 'bg-gray-800 hover:bg-gray-700'}`,
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: `w-3 h-3 rounded-full ${settings.riskLevel === 'RED' ? 'bg-red-500' : 'bg-gray-600'}`
-                                        }, void 0, false, {
-                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                            lineNumber: 122,
-                                            columnNumber: 15
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "text-white font-medium flex items-center gap-2",
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "w-3 h-3 bg-red-500 rounded-full"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                    lineNumber: 124,
-                                                    columnNumber: 17
-                                                }, this),
-                                                "Red"
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                            lineNumber: 123,
-                                            columnNumber: 15
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                    lineNumber: 114,
-                                    columnNumber: 13
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                            lineNumber: 82,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
-                                    className: "text-gray-400 text-sm mb-3 block",
-                                    children: "Number of rounds"
-                                }, void 0, false, {
-                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                    lineNumber: 132,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "grid grid-cols-2 gap-3",
-                                    children: roundOptions.map((rounds)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                            onClick: ()=>updateSetting('numberOfRounds', rounds),
-                                            className: `p-4 rounded-lg transition-all ${settings.numberOfRounds === rounds ? 'bg-gray-700 ring-2 ring-green-500' : 'bg-gray-800 hover:bg-gray-700'}`,
-                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center gap-3",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: `w-3 h-3 rounded-full ${settings.numberOfRounds === rounds ? 'bg-green-500' : 'bg-gray-600'}`
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 145,
-                                                        columnNumber: 21
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-white font-bold text-lg",
-                                                        children: rounds
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 146,
-                                                        columnNumber: 21
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                lineNumber: 144,
-                                                columnNumber: 19
-                                            }, this)
-                                        }, rounds, false, {
-                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                            lineNumber: 135,
-                                            columnNumber: 17
-                                        }, this))
-                                }, void 0, false, {
-                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                    lineNumber: 133,
-                                    columnNumber: 13
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                            lineNumber: 131,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "space-y-3",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "bg-gray-800 rounded-lg p-4",
-                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "flex items-center justify-between",
-                                        children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center gap-3 flex-1",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                        onClick: ()=>updateSetting('stopOnLossEnabled', !settings.stopOnLossEnabled),
-                                                        className: `w-12 h-6 rounded-full transition-colors relative ${settings.stopOnLossEnabled ? 'bg-green-500' : 'bg-gray-600'}`,
-                                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                            className: `absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform ${settings.stopOnLossEnabled ? 'translate-x-6' : 'translate-x-0.5'}`
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                            lineNumber: 165,
-                                                            columnNumber: 21
-                                                        }, this)
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 159,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-white text-sm",
-                                                        children: "Stop if cash decreases by"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 169,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                lineNumber: 158,
-                                                columnNumber: 17
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center gap-2",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                        onClick: ()=>adjustValue('stopOnLossAmount', -10),
-                                                        className: "w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600 text-white flex items-center justify-center",
-                                                        children: "−"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 172,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-white font-mono text-lg min-w-[80px] text-center",
-                                                        children: settings.stopOnLossAmount.toFixed(2)
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 178,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                        onClick: ()=>adjustValue('stopOnLossAmount', 10),
-                                                        className: "w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600 text-white flex items-center justify-center",
-                                                        children: "+"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 181,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                lineNumber: 171,
-                                                columnNumber: 17
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                        lineNumber: 157,
-                                        columnNumber: 15
-                                    }, this)
-                                }, void 0, false, {
-                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                    lineNumber: 156,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "bg-gray-800 rounded-lg p-4",
-                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "flex items-center justify-between",
-                                        children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center gap-3 flex-1",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                        onClick: ()=>updateSetting('stopOnBigWinEnabled', !settings.stopOnBigWinEnabled),
-                                                        className: `w-12 h-6 rounded-full transition-colors relative ${settings.stopOnBigWinEnabled ? 'bg-green-500' : 'bg-gray-600'}`,
-                                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                            className: `absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform ${settings.stopOnBigWinEnabled ? 'translate-x-6' : 'translate-x-0.5'}`
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                            lineNumber: 201,
-                                                            columnNumber: 21
-                                                        }, this)
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 195,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-white text-sm",
-                                                        children: "Stop if single win exceeds"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 205,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                lineNumber: 194,
-                                                columnNumber: 17
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center gap-2",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                        onClick: ()=>adjustValue('stopOnBigWinAmount', -10),
-                                                        className: "w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600 text-white flex items-center justify-center",
-                                                        children: "−"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 208,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-white font-mono text-lg min-w-[80px] text-center",
-                                                        children: settings.stopOnBigWinAmount.toFixed(2)
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 214,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                        onClick: ()=>adjustValue('stopOnBigWinAmount', 10),
-                                                        className: "w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600 text-white flex items-center justify-center",
-                                                        children: "+"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 217,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                lineNumber: 207,
-                                                columnNumber: 17
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                        lineNumber: 193,
-                                        columnNumber: 15
-                                    }, this)
-                                }, void 0, false, {
-                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                    lineNumber: 192,
-                                    columnNumber: 13
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                            lineNumber: 154,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            onClick: ()=>setShowMoreOptions(!showMoreOptions),
-                            className: "w-full py-3 bg-gray-800 hover:bg-gray-700 rounded-lg text-white font-medium flex items-center justify-center gap-2 transition-colors",
-                            children: [
-                                "More options",
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                    className: `transition-transform ${showMoreOptions ? 'rotate-180' : ''}`,
-                                    children: "▼"
-                                }, void 0, false, {
-                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                    lineNumber: 234,
-                                    columnNumber: 13
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                            lineNumber: 229,
-                            columnNumber: 11
-                        }, this),
-                        showMoreOptions && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "space-y-4 animate-in slide-in-from-top-2",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "bg-gray-800 rounded-lg p-4",
-                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "flex items-center justify-between",
-                                        children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center gap-3 flex-1",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                        onClick: ()=>updateSetting('stopOnProfitEnabled', !settings.stopOnProfitEnabled),
-                                                        className: `w-12 h-6 rounded-full transition-colors relative ${settings.stopOnProfitEnabled ? 'bg-green-500' : 'bg-gray-600'}`,
-                                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                            className: `absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform ${settings.stopOnProfitEnabled ? 'translate-x-6' : 'translate-x-0.5'}`
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                            lineNumber: 250,
-                                                            columnNumber: 23
-                                                        }, this)
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 244,
-                                                        columnNumber: 21
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-white text-sm",
-                                                        children: "Stop if cash increases by"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 254,
-                                                        columnNumber: 21
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                lineNumber: 243,
-                                                columnNumber: 19
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center gap-2",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                        onClick: ()=>adjustValue('stopOnProfitAmount', -10),
-                                                        className: "w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600 text-white flex items-center justify-center",
-                                                        children: "−"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 257,
-                                                        columnNumber: 21
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-white font-mono text-lg min-w-[80px] text-center",
-                                                        children: settings.stopOnProfitAmount.toFixed(2)
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 263,
-                                                        columnNumber: 21
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                        onClick: ()=>adjustValue('stopOnProfitAmount', 10),
-                                                        className: "w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600 text-white flex items-center justify-center",
-                                                        children: "+"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 266,
-                                                        columnNumber: 21
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                lineNumber: 256,
-                                                columnNumber: 19
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                        lineNumber: 242,
-                                        columnNumber: 17
-                                    }, this)
-                                }, void 0, false, {
-                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                    lineNumber: 241,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
-                                            className: "text-gray-400 text-sm mb-3 block text-center",
-                                            children: "If I lost"
-                                        }, void 0, false, {
-                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                            lineNumber: 278,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                            onClick: ()=>updateSetting('onLossStrategy', 'reset'),
-                                            className: `w-full p-4 rounded-lg mb-3 transition-all ${settings.onLossStrategy === 'reset' ? 'bg-gray-700 ring-2 ring-green-500' : 'bg-gray-800 hover:bg-gray-700'}`,
-                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center gap-3",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: `w-3 h-3 rounded-full ${settings.onLossStrategy === 'reset' ? 'bg-green-500' : 'bg-gray-600'}`
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 290,
-                                                        columnNumber: 21
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-white font-medium",
-                                                        children: "Return to initial bet"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 291,
-                                                        columnNumber: 21
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                lineNumber: 289,
-                                                columnNumber: 19
-                                            }, this)
-                                        }, void 0, false, {
-                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                            lineNumber: 281,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "grid grid-cols-2 gap-3",
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: `p-4 rounded-lg ${settings.onLossStrategy === 'increase' ? 'bg-gray-700 ring-2 ring-green-500' : 'bg-gray-800'}`,
-                                                    children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                            onClick: ()=>updateSetting('onLossStrategy', 'increase'),
-                                                            className: "w-full text-left mb-2",
-                                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "flex items-center gap-3 mb-2",
-                                                                children: [
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                        className: `w-3 h-3 rounded-full ${settings.onLossStrategy === 'increase' ? 'bg-green-500' : 'bg-gray-600'}`
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                        lineNumber: 309,
-                                                                        columnNumber: 25
-                                                                    }, this),
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                        className: "text-white text-sm font-medium",
-                                                                        children: "Increase bet by"
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                        lineNumber: 310,
-                                                                        columnNumber: 25
-                                                                    }, this)
-                                                                ]
-                                                            }, void 0, true, {
-                                                                fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                lineNumber: 308,
-                                                                columnNumber: 23
-                                                            }, this)
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                            lineNumber: 304,
-                                                            columnNumber: 21
-                                                        }, this),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                            className: "flex items-center justify-center gap-2",
-                                                            children: [
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                                    onClick: ()=>adjustValue('onLossPercent', -5),
-                                                                    className: "w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs",
-                                                                    children: "−"
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                    lineNumber: 314,
-                                                                    columnNumber: 23
-                                                                }, this),
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                    className: "text-white font-bold text-xl",
-                                                                    children: [
-                                                                        settings.onLossPercent,
-                                                                        "%"
-                                                                    ]
-                                                                }, void 0, true, {
-                                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                    lineNumber: 320,
-                                                                    columnNumber: 23
-                                                                }, this),
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                                    onClick: ()=>adjustValue('onLossPercent', 5),
-                                                                    className: "w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs",
-                                                                    children: "+"
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                    lineNumber: 321,
-                                                                    columnNumber: 23
-                                                                }, this)
-                                                            ]
-                                                        }, void 0, true, {
-                                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                            lineNumber: 313,
-                                                            columnNumber: 21
-                                                        }, this)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                    lineNumber: 297,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: `p-4 rounded-lg ${settings.onLossStrategy === 'decrease' ? 'bg-gray-700 ring-2 ring-green-500' : 'bg-gray-800'}`,
-                                                    children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                            onClick: ()=>updateSetting('onLossStrategy', 'decrease'),
-                                                            className: "w-full text-left mb-2",
-                                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "flex items-center gap-3 mb-2",
-                                                                children: [
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                        className: `w-3 h-3 rounded-full ${settings.onLossStrategy === 'decrease' ? 'bg-green-500' : 'bg-gray-600'}`
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                        lineNumber: 342,
-                                                                        columnNumber: 25
-                                                                    }, this),
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                        className: "text-white text-sm font-medium",
-                                                                        children: "Decrease bet by"
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                        lineNumber: 343,
-                                                                        columnNumber: 25
-                                                                    }, this)
-                                                                ]
-                                                            }, void 0, true, {
-                                                                fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                lineNumber: 341,
-                                                                columnNumber: 23
-                                                            }, this)
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                            lineNumber: 337,
-                                                            columnNumber: 21
-                                                        }, this),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                            className: "flex items-center justify-center gap-2",
-                                                            children: [
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                                    onClick: ()=>adjustValue('onLossPercent', -5),
-                                                                    className: "w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs",
-                                                                    children: "−"
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                    lineNumber: 347,
-                                                                    columnNumber: 23
-                                                                }, this),
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                    className: "text-white font-bold text-xl",
-                                                                    children: [
-                                                                        settings.onLossPercent,
-                                                                        "%"
-                                                                    ]
-                                                                }, void 0, true, {
-                                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                    lineNumber: 353,
-                                                                    columnNumber: 23
-                                                                }, this),
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                                    onClick: ()=>adjustValue('onLossPercent', 5),
-                                                                    className: "w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs",
-                                                                    children: "+"
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                    lineNumber: 354,
-                                                                    columnNumber: 23
-                                                                }, this)
-                                                            ]
-                                                        }, void 0, true, {
-                                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                            lineNumber: 346,
-                                                            columnNumber: 21
-                                                        }, this)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                    lineNumber: 330,
-                                                    columnNumber: 19
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                            lineNumber: 296,
-                                            columnNumber: 17
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                    lineNumber: 277,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
-                                            className: "text-gray-400 text-sm mb-3 block text-center",
-                                            children: "If I win"
-                                        }, void 0, false, {
-                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                            lineNumber: 367,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                            onClick: ()=>updateSetting('onWinStrategy', 'reset'),
-                                            className: `w-full p-4 rounded-lg mb-3 transition-all ${settings.onWinStrategy === 'reset' ? 'bg-gray-700 ring-2 ring-green-500' : 'bg-gray-800 hover:bg-gray-700'}`,
-                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex items-center gap-3",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: `w-3 h-3 rounded-full ${settings.onWinStrategy === 'reset' ? 'bg-green-500' : 'bg-gray-600'}`
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 379,
-                                                        columnNumber: 21
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-white font-medium",
-                                                        children: "Return to initial bet"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                        lineNumber: 380,
-                                                        columnNumber: 21
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                lineNumber: 378,
-                                                columnNumber: 19
-                                            }, this)
-                                        }, void 0, false, {
-                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                            lineNumber: 370,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "grid grid-cols-2 gap-3",
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: `p-4 rounded-lg ${settings.onWinStrategy === 'increase' ? 'bg-gray-700 ring-2 ring-green-500' : 'bg-gray-800'}`,
-                                                    children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                            onClick: ()=>updateSetting('onWinStrategy', 'increase'),
-                                                            className: "w-full text-left mb-2",
-                                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "flex items-center gap-3 mb-2",
-                                                                children: [
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                        className: `w-3 h-3 rounded-full ${settings.onWinStrategy === 'increase' ? 'bg-green-500' : 'bg-gray-600'}`
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                        lineNumber: 398,
-                                                                        columnNumber: 25
-                                                                    }, this),
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                        className: "text-white text-sm font-medium",
-                                                                        children: "Increase bet by"
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                        lineNumber: 399,
-                                                                        columnNumber: 25
-                                                                    }, this)
-                                                                ]
-                                                            }, void 0, true, {
-                                                                fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                lineNumber: 397,
-                                                                columnNumber: 23
-                                                            }, this)
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                            lineNumber: 393,
-                                                            columnNumber: 21
-                                                        }, this),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                            className: "flex items-center justify-center gap-2",
-                                                            children: [
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                                    onClick: ()=>adjustValue('onWinPercent', -5),
-                                                                    className: "w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs",
-                                                                    children: "−"
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                    lineNumber: 403,
-                                                                    columnNumber: 23
-                                                                }, this),
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                    className: "text-white font-bold text-xl",
-                                                                    children: [
-                                                                        settings.onWinPercent,
-                                                                        "%"
-                                                                    ]
-                                                                }, void 0, true, {
-                                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                    lineNumber: 409,
-                                                                    columnNumber: 23
-                                                                }, this),
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                                    onClick: ()=>adjustValue('onWinPercent', 5),
-                                                                    className: "w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs",
-                                                                    children: "+"
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                    lineNumber: 410,
-                                                                    columnNumber: 23
-                                                                }, this)
-                                                            ]
-                                                        }, void 0, true, {
-                                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                            lineNumber: 402,
-                                                            columnNumber: 21
-                                                        }, this)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                    lineNumber: 386,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: `p-4 rounded-lg ${settings.onWinStrategy === 'decrease' ? 'bg-gray-700 ring-2 ring-green-500' : 'bg-gray-800'}`,
-                                                    children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                            onClick: ()=>updateSetting('onWinStrategy', 'decrease'),
-                                                            className: "w-full text-left mb-2",
-                                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "flex items-center gap-3 mb-2",
-                                                                children: [
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                        className: `w-3 h-3 rounded-full ${settings.onWinStrategy === 'decrease' ? 'bg-green-500' : 'bg-gray-600'}`
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                        lineNumber: 431,
-                                                                        columnNumber: 25
-                                                                    }, this),
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                        className: "text-white text-sm font-medium",
-                                                                        children: "Decrease bet by"
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                        lineNumber: 432,
-                                                                        columnNumber: 25
-                                                                    }, this)
-                                                                ]
-                                                            }, void 0, true, {
-                                                                fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                lineNumber: 430,
-                                                                columnNumber: 23
-                                                            }, this)
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                            lineNumber: 426,
-                                                            columnNumber: 21
-                                                        }, this),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                            className: "flex items-center justify-center gap-2",
-                                                            children: [
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                                    onClick: ()=>adjustValue('onWinPercent', -5),
-                                                                    className: "w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs",
-                                                                    children: "−"
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                    lineNumber: 436,
-                                                                    columnNumber: 23
-                                                                }, this),
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                    className: "text-white font-bold text-xl",
-                                                                    children: [
-                                                                        settings.onWinPercent,
-                                                                        "%"
-                                                                    ]
-                                                                }, void 0, true, {
-                                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                    lineNumber: 442,
-                                                                    columnNumber: 23
-                                                                }, this),
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                                    onClick: ()=>adjustValue('onWinPercent', 5),
-                                                                    className: "w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs",
-                                                                    children: "+"
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                                    lineNumber: 443,
-                                                                    columnNumber: 23
-                                                                }, this)
-                                                            ]
-                                                        }, void 0, true, {
-                                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                            lineNumber: 435,
-                                                            columnNumber: 21
-                                                        }, this)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                                    lineNumber: 419,
-                                                    columnNumber: 19
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                            lineNumber: 385,
-                                            columnNumber: 17
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                                    lineNumber: 366,
-                                    columnNumber: 15
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                            lineNumber: 239,
-                            columnNumber: 13
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
-                            onClick: handleStart,
-                            className: "w-full py-6 bg-green-600 hover:bg-green-700 text-white font-bold text-lg rounded-lg transition-colors",
-                            children: "START AUTO"
-                        }, void 0, false, {
-                            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                            lineNumber: 457,
-                            columnNumber: 11
-                        }, this)
-                    ]
-                }, void 0, true, {
-                    fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-                    lineNumber: 80,
-                    columnNumber: 9
-                }, this)
-            ]
-        }, void 0, true, {
-            fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-            lineNumber: 73,
-            columnNumber: 7
-        }, this)
-    }, void 0, false, {
-        fileName: "[project]/PLINKO/components/AutoPlayModal.tsx",
-        lineNumber: 72,
-        columnNumber: 5
-    }, this);
-}
-_s(AutoPlayModal, "Dcj6j2ulPsctmtUrRrpQfQKDPH4=");
-_c = AutoPlayModal;
-var _c;
-__turbopack_context__.k.register(_c, "AutoPlayModal");
-if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
-    __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
-}
+const e = new Error("Could not parse module '[project]/PLINKO/components/AutoPlayModal.tsx'\n\nUnexpected token. Did you mean `{'}'}` or `&rbrace;`?");
+e.code = 'MODULE_UNPARSABLE';
+throw e;
 }),
 "[project]/PLINKO/components/PresetAmountsModal.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
@@ -3436,7 +2429,17 @@ const Home = ()=>{
         balance: 755.37,
         ballCount: 0
     });
-    const [wager, setWager] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(0.30);
+    // Initialize wager from localStorage or default to $1
+    const [wager, setWager] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
+        "Home.useState": ()=>{
+            if ("TURBOPACK compile-time truthy", 1) {
+                const saved = localStorage.getItem('plinko-wager');
+                return saved ? parseFloat(saved) : 1.00;
+            }
+            //TURBOPACK unreachable
+            ;
+        }
+    }["Home.useState"]);
     const [lastDrop, setLastDrop] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [history, setHistory] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [isAutoDrop, setIsAutoDrop] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
@@ -3455,51 +2458,96 @@ const Home = ()=>{
     const initialWagerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0.30);
     const startingBalanceRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(755.37);
     const lastWinAmountRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
+    const currentWagerRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(1.00); // Track current wager for auto-play calculations
+    const isAutoDropRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(false); // Track auto-drop status synchronously
+    const autoPlaySettingsRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null); // Track settings synchronously
+    // Keep currentWagerRef in sync with wager state
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "Home.useEffect": ()=>{
+            currentWagerRef.current = wager;
+        }
+    }["Home.useEffect"], [
+        wager
+    ]);
     const handleScore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
         "Home.useCallback[handleScore]": (multiplier)=>{
             const winAmount = wager * multiplier;
             const profit = winAmount - wager;
             lastWinAmountRef.current = winAmount;
+            console.log('=== SCORE EVENT ===');
+            console.log('Multiplier:', multiplier);
+            console.log('Current Wager:', wager);
+            console.log('Is Auto Drop:', isAutoDrop);
+            console.log('Auto Play Settings:', autoPlaySettings);
+            console.log('Remaining Balls:', remainingBalls);
+            console.log('Game Balance:', gameState.balance);
             setGameState({
                 "Home.useCallback[handleScore]": (prev)=>{
                     const newBalance = prev.balance + winAmount;
                     // Check AutoPlay stop conditions
-                    if (isAutoDrop && autoPlaySettings) {
+                    console.log('Auto-drop check:', isAutoDropRef.current, '&&', !!autoPlaySettingsRef.current, '=', isAutoDropRef.current && autoPlaySettingsRef.current);
+                    if (isAutoDropRef.current && autoPlaySettingsRef.current) {
                         // Stop if cash decreases by
-                        if (autoPlaySettings.stopOnLossEnabled) {
+                        if (autoPlaySettingsRef.current.stopOnLossEnabled) {
                             const totalLoss = startingBalanceRef.current - newBalance;
-                            if (totalLoss >= autoPlaySettings.stopOnLossAmount) {
+                            if (totalLoss >= autoPlaySettingsRef.current.stopOnLossAmount) {
+                                console.log('=== AUTO-DROP DISABLED: Loss condition met ===');
+                                isAutoDropRef.current = false;
+                                autoPlaySettingsRef.current = null;
+                                setAutoPlaySettings(null);
                                 setIsAutoDrop(false);
                                 setRemainingBalls(0);
                             }
                         }
                         // Stop if single win exceeds
-                        if (autoPlaySettings.stopOnBigWinEnabled && winAmount >= autoPlaySettings.stopOnBigWinAmount) {
+                        if (autoPlaySettingsRef.current.stopOnBigWinEnabled && winAmount >= autoPlaySettingsRef.current.stopOnBigWinAmount) {
+                            console.log('=== AUTO-DROP DISABLED: Big win condition met ===');
+                            isAutoDropRef.current = false;
+                            autoPlaySettingsRef.current = null;
+                            setAutoPlaySettings(null);
                             setIsAutoDrop(false);
                             setRemainingBalls(0);
                         }
                         // Stop if cash increases by
-                        if (autoPlaySettings.stopOnProfitEnabled) {
+                        if (autoPlaySettingsRef.current.stopOnProfitEnabled) {
                             const totalProfit = newBalance - startingBalanceRef.current;
-                            if (totalProfit >= autoPlaySettings.stopOnProfitAmount) {
+                            if (totalProfit >= autoPlaySettingsRef.current.stopOnProfitAmount) {
+                                console.log('=== AUTO-DROP DISABLED: Profit condition met ===');
+                                isAutoDropRef.current = false;
+                                autoPlaySettingsRef.current = null;
+                                setAutoPlaySettings(null);
                                 setIsAutoDrop(false);
                                 setRemainingBalls(0);
                             }
                         }
                         // Apply bet progression strategy
                         const isWin = multiplier > 1;
-                        const strategy = isWin ? autoPlaySettings.onWinStrategy : autoPlaySettings.onLossStrategy;
-                        const percent = isWin ? autoPlaySettings.onWinPercent : autoPlaySettings.onLossPercent;
+                        const strategy = isWin ? autoPlaySettingsRef.current.onWinStrategy : autoPlaySettingsRef.current.onLossStrategy;
+                        const percent = isWin ? autoPlaySettingsRef.current.onWinPercent : autoPlaySettingsRef.current.onLossPercent;
+                        console.log('Win/Loss:', isWin ? 'WIN' : 'LOSS');
+                        console.log('Strategy:', strategy);
+                        console.log('Percent:', percent);
+                        console.log('*** APPLYING WAGER STRATEGY ***');
+                        console.log('currentWagerRef.current:', currentWagerRef.current);
+                        console.log('wager state:', wager);
+                        // Use currentWagerRef to get the most up-to-date wager value
+                        let currentWager = currentWagerRef.current || wager;
+                        console.log('Using currentWager:', currentWager);
+                        let newWager = currentWager;
                         if (strategy === 'reset') {
-                            setWager(initialWagerRef.current);
+                            newWager = initialWagerRef.current;
+                            console.log('Resetting bet to initial:', newWager);
                         } else if (strategy === 'increase') {
-                            setWager({
-                                "Home.useCallback[handleScore]": (prev)=>+(prev * (1 + percent / 100)).toFixed(2)
-                            }["Home.useCallback[handleScore]"]);
+                            newWager = +(currentWager * (1 + percent / 100)).toFixed(2);
+                            console.log('Increasing bet from', currentWager, 'to', newWager);
                         } else if (strategy === 'decrease') {
-                            setWager({
-                                "Home.useCallback[handleScore]": (prev)=>Math.max(0.1, +(prev * (1 - percent / 100)).toFixed(2))
-                            }["Home.useCallback[handleScore]"]);
+                            newWager = Math.max(0.1, +(currentWager * (1 - percent / 100)).toFixed(2));
+                            console.log('Decreasing bet from', currentWager, 'to', newWager);
+                        }
+                        // Update wager immediately
+                        if (newWager !== currentWager) {
+                            console.log('*** UPDATING WAGER FROM', currentWager, 'TO', newWager, '***');
+                            setWagerWithPersistence(newWager);
                         }
                     }
                     return {
@@ -3543,6 +2591,9 @@ const Home = ()=>{
             setGameState({
                 "Home.useCallback[dropBall]": (prev)=>{
                     if (prev.balance < wager) {
+                        isAutoDropRef.current = false;
+                        autoPlaySettingsRef.current = null;
+                        setAutoPlaySettings(null);
                         setIsAutoDrop(false);
                         return prev;
                     }
@@ -3565,11 +2616,18 @@ const Home = ()=>{
     // AutoPlay handler
     const handleStartAutoPlay = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
         "Home.useCallback[handleStartAutoPlay]": (settings)=>{
+            console.log('=== STARTING AUTO-PLAY ===');
+            console.log('Settings:', settings);
+            console.log('Initial Wager:', wager);
+            console.log('Initial Balance:', gameState.balance);
+            autoPlaySettingsRef.current = settings; // Set ref synchronously
             setAutoPlaySettings(settings);
             setRemainingBalls(settings.numberOfRounds);
             initialWagerRef.current = wager;
             startingBalanceRef.current = gameState.balance;
+            isAutoDropRef.current = true; // Set ref synchronously
             setIsAutoDrop(true);
+            console.log('Auto-drop enabled');
         }
     }["Home.useCallback[handleStartAutoPlay]"], [
         wager,
@@ -3587,6 +2645,10 @@ const Home = ()=>{
                             "Home.useEffect": (prev)=>{
                                 const newCount = prev - 1;
                                 if (newCount <= 0) {
+                                    console.log('=== AUTO-DROP DISABLED: All balls completed ===');
+                                    isAutoDropRef.current = false;
+                                    autoPlaySettingsRef.current = null;
+                                    setAutoPlaySettings(null);
                                     setIsAutoDrop(false);
                                     setRemainingBalls(0);
                                 }
@@ -3624,7 +2686,19 @@ const Home = ()=>{
         }
     }["Home.useEffect"], []);
     const adjustWager = (amount)=>{
-        setWager((prev)=>Math.max(0.1, +(prev + amount).toFixed(2)));
+        setWagerWithPersistence((prev)=>Math.max(0.1, +(prev + amount).toFixed(2)));
+    };
+    // Helper to set wager with localStorage persistence
+    const setWagerWithPersistence = (newWager)=>{
+        setWager((prev)=>{
+            const newValue = typeof newWager === 'function' ? newWager(prev) : newWager;
+            // Update ref synchronously for immediate access
+            currentWagerRef.current = newValue;
+            if ("TURBOPACK compile-time truthy", 1) {
+                localStorage.setItem('plinko-wager', newValue.toString());
+            }
+            return newValue;
+        });
     };
     // Hold-to-repeat functionality for wager buttons
     const intervalRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
@@ -3671,7 +2745,7 @@ const Home = ()=>{
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$MainNav$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 242,
+                lineNumber: 326,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
@@ -3691,12 +2765,12 @@ const Home = ()=>{
                                             className: "fas fa-history text-xs"
                                         }, void 0, false, {
                                             fileName: "[project]/PLINKO/app/page.tsx",
-                                            lineNumber: 255,
+                                            lineNumber: 339,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 250,
+                                        lineNumber: 334,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3725,7 +2799,7 @@ const Home = ()=>{
                                                 ]
                                             }, item.id, true, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 278,
+                                                lineNumber: 362,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0));
                                         }) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3733,18 +2807,18 @@ const Home = ()=>{
                                             children: "Waiting for results..."
                                         }, void 0, false, {
                                             fileName: "[project]/PLINKO/app/page.tsx",
-                                            lineNumber: 286,
+                                            lineNumber: 370,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 257,
+                                        lineNumber: 341,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                lineNumber: 249,
+                                lineNumber: 333,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3752,24 +2826,24 @@ const Home = ()=>{
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>setSoundEnabled(!soundEnabled),
-                                        className: `relative w-12 h-6 rounded-full transition-all duration-300 ${soundEnabled ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-gray-600 to-gray-700'} shadow-lg`,
+                                        className: `relative w-12 h-6 top-4 rounded-full transition-all duration-300 ${soundEnabled ? 'bg-gradient-to-r from-green-500 to-green-600' : 'bg-gradient-to-r from-gray-600 to-gray-700'} shadow-lg`,
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: `absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-all duration-300 flex items-center justify-center ${soundEnabled ? 'left-[26px]' : 'left-0.5'}`,
                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("i", {
                                                 className: `fas ${soundEnabled ? 'fa-volume-up' : 'fa-volume-mute'} text-[8px] ${soundEnabled ? 'text-green-600' : 'text-gray-600'}`
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 306,
+                                                lineNumber: 390,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/PLINKO/app/page.tsx",
-                                            lineNumber: 301,
+                                            lineNumber: 385,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 293,
+                                        lineNumber: 377,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3777,19 +2851,19 @@ const Home = ()=>{
                                         children: soundEnabled ? 'On' : 'Off'
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 309,
+                                        lineNumber: 393,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                lineNumber: 292,
+                                lineNumber: 376,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/PLINKO/app/page.tsx",
-                        lineNumber: 247,
+                        lineNumber: 331,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3803,7 +2877,7 @@ const Home = ()=>{
                                 ]
                             }, winLossBadge.key, true, {
                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                lineNumber: 319,
+                                lineNumber: 403,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3817,7 +2891,7 @@ const Home = ()=>{
                                         })
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 333,
+                                        lineNumber: 417,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3825,25 +2899,25 @@ const Home = ()=>{
                                         children: "USD"
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 336,
+                                        lineNumber: 420,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                lineNumber: 332,
+                                lineNumber: 416,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/PLINKO/app/page.tsx",
-                        lineNumber: 316,
+                        lineNumber: 400,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 245,
+                lineNumber: 329,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -3854,21 +2928,22 @@ const Home = ()=>{
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$PlinkoGame$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                             onScore: handleScore,
                             lastDrop: lastDrop,
-                            soundEnabled: soundEnabled
+                            soundEnabled: soundEnabled,
+                            isAutoDrop: isAutoDrop
                         }, void 0, false, {
                             fileName: "[project]/PLINKO/app/page.tsx",
-                            lineNumber: 345,
+                            lineNumber: 429,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     }, void 0, false, {
                         fileName: "[project]/PLINKO/app/page.tsx",
-                        lineNumber: 344,
+                        lineNumber: 428,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex-shrink-0 bg-black/20 rounded-2xl",
                         style: {
-                            backgroundColor: 'rgba(162, 214, 236, 0.71)'
+                            backgroundColor: 'rgba(45, 12, 40, 0.65)'
                         },
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3885,7 +2960,7 @@ const Home = ()=>{
                                                     children: "Bet USD"
                                                 }, void 0, false, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 367,
+                                                    lineNumber: 452,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3893,18 +2968,18 @@ const Home = ()=>{
                                                     children: wager.toFixed(2)
                                                 }, void 0, false, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 368,
+                                                    lineNumber: 453,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/PLINKO/app/page.tsx",
-                                            lineNumber: 366,
+                                            lineNumber: 451,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 362,
+                                        lineNumber: 447,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3920,7 +2995,7 @@ const Home = ()=>{
                                                 children: "−"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 374,
+                                                lineNumber: 459,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3930,12 +3005,12 @@ const Home = ()=>{
                                                     className: "fas fa-layer-group text-sm"
                                                 }, void 0, false, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 388,
+                                                    lineNumber: 473,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 384,
+                                                lineNumber: 469,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3948,13 +3023,13 @@ const Home = ()=>{
                                                 children: "+"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 390,
+                                                lineNumber: 475,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 373,
+                                        lineNumber: 458,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3963,7 +3038,7 @@ const Home = ()=>{
                                         children: "GREEN"
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 403,
+                                        lineNumber: 488,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3972,7 +3047,7 @@ const Home = ()=>{
                                         children: "BLUE"
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 409,
+                                        lineNumber: 494,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3981,12 +3056,15 @@ const Home = ()=>{
                                         children: "RED"
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 415,
+                                        lineNumber: 500,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>{
                                             if (isAutoDrop) {
+                                                isAutoDropRef.current = false;
+                                                autoPlaySettingsRef.current = null;
+                                                setAutoPlaySettings(null);
                                                 setIsAutoDrop(false);
                                                 setRemainingBalls(0);
                                             } else {
@@ -3999,24 +3077,24 @@ const Home = ()=>{
                                             children: remainingBalls
                                         }, void 0, false, {
                                             fileName: "[project]/PLINKO/app/page.tsx",
-                                            lineNumber: 439,
+                                            lineNumber: 527,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("i", {
                                             className: "fas fa-sync-alt text-lg"
                                         }, void 0, false, {
                                             fileName: "[project]/PLINKO/app/page.tsx",
-                                            lineNumber: 441,
+                                            lineNumber: 529,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 423,
+                                        lineNumber: 508,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                lineNumber: 360,
+                                lineNumber: 445,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4031,7 +3109,7 @@ const Home = ()=>{
                                                 children: "GREEN"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 450,
+                                                lineNumber: 538,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4040,7 +3118,7 @@ const Home = ()=>{
                                                 children: "BLUE"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 456,
+                                                lineNumber: 544,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4049,7 +3127,7 @@ const Home = ()=>{
                                                 children: "RED"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 462,
+                                                lineNumber: 550,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4067,24 +3145,24 @@ const Home = ()=>{
                                                     children: remainingBalls
                                                 }, void 0, false, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 486,
+                                                    lineNumber: 574,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("i", {
                                                     className: "fas fa-sync-alt text-lg"
                                                 }, void 0, false, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 488,
+                                                    lineNumber: 576,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 470,
+                                                lineNumber: 558,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 449,
+                                        lineNumber: 537,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4101,7 +3179,7 @@ const Home = ()=>{
                                                             children: "Bet USD"
                                                         }, void 0, false, {
                                                             fileName: "[project]/PLINKO/app/page.tsx",
-                                                            lineNumber: 500,
+                                                            lineNumber: 588,
                                                             columnNumber: 19
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -4109,18 +3187,18 @@ const Home = ()=>{
                                                             children: wager.toFixed(2)
                                                         }, void 0, false, {
                                                             fileName: "[project]/PLINKO/app/page.tsx",
-                                                            lineNumber: 501,
+                                                            lineNumber: 589,
                                                             columnNumber: 19
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 499,
+                                                    lineNumber: 587,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 495,
+                                                lineNumber: 583,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4133,7 +3211,7 @@ const Home = ()=>{
                                                 children: "−"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 505,
+                                                lineNumber: 593,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4143,12 +3221,12 @@ const Home = ()=>{
                                                     className: "fas fa-layer-group text-sm"
                                                 }, void 0, false, {
                                                     fileName: "[project]/PLINKO/app/page.tsx",
-                                                    lineNumber: 519,
+                                                    lineNumber: 607,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 515,
+                                                lineNumber: 603,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -4161,31 +3239,31 @@ const Home = ()=>{
                                                 children: "+"
                                             }, void 0, false, {
                                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                                lineNumber: 521,
+                                                lineNumber: 609,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/PLINKO/app/page.tsx",
-                                        lineNumber: 494,
+                                        lineNumber: 582,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/PLINKO/app/page.tsx",
-                                lineNumber: 447,
+                                lineNumber: 535,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/PLINKO/app/page.tsx",
-                        lineNumber: 353,
+                        lineNumber: 438,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 342,
+                lineNumber: 426,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$AutoPlayModal$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -4195,16 +3273,16 @@ const Home = ()=>{
                 currentBalance: gameState.balance
             }, void 0, false, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 537,
+                lineNumber: 625,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$PresetAmountsModal$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                 open: showPresetModal,
                 onOpenChange: setShowPresetModal,
-                onSelectAmount: setWager
+                onSelectAmount: setWagerWithPersistence
             }, void 0, false, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 545,
+                lineNumber: 633,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$ExtendedHistoryModal$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -4213,27 +3291,27 @@ const Home = ()=>{
                 history: history
             }, void 0, false, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 552,
+                lineNumber: 640,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$PLINKO$2f$components$2f$CustomAmountModal$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                 open: showCustomAmountModal,
                 onOpenChange: setShowCustomAmountModal,
-                onSetAmount: setWager,
+                onSetAmount: setWagerWithPersistence,
                 currentAmount: wager
             }, void 0, false, {
                 fileName: "[project]/PLINKO/app/page.tsx",
-                lineNumber: 559,
+                lineNumber: 647,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/PLINKO/app/page.tsx",
-        lineNumber: 230,
+        lineNumber: 314,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
-_s(Home, "+zpZf1/plVGchjDsPeGT34KHf0c=");
+_s(Home, "VsJrYyKM0c6J/Zh9euC7mRwW6rU=");
 _c = Home;
 const __TURBOPACK__default__export__ = Home;
 var _c;

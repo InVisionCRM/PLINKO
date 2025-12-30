@@ -18,6 +18,7 @@ interface PlinkoGameProps {
   onScore: (multiplier: number) => void;
   lastDrop: { id: number; risk: RiskLevel } | null;
   soundEnabled: boolean;
+  isAutoDrop: boolean;
 }
 
 // Collision categories to prevent ball-ball interactions (like online Plinko games)
@@ -28,7 +29,7 @@ const COLLISION_CATEGORIES = {
   WALL: 0x0008     // Category for walls (if any)
 };
 
-const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled }) => {
+const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled, isAutoDrop }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
@@ -670,9 +671,11 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled
     Matter.Body.setVelocity(ball, { x: initialVelX, y: PHYSICS.INITIAL_V_Y });
     Matter.World.add(engineRef.current.world, ball);
 
-    // Play drop sound when ball is released
-    playDropSound();
-  }, [lastDrop]);
+    // Play drop sound when ball is released (but not during auto-drop)
+    if (!isAutoDrop) {
+      playDropSound();
+    }
+  }, [lastDrop, isAutoDrop]);
 
   return (
     <div

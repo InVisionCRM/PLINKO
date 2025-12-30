@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RiskLevel } from '@/types';
+import HighPercentageWarningModal from './HighPercentageWarningModal';
 
 interface AutoPlaySettings {
   riskLevel: RiskLevel;
@@ -35,6 +36,8 @@ interface AutoPlayModalProps {
 
 export default function AutoPlayModal({ open, onOpenChange, onStart, currentBalance }: AutoPlayModalProps) {
   const [showMoreOptions, setShowMoreOptions] = useState(false);
+  const [showWarningModal, setShowWarningModal] = useState(false);
+  const [pendingSettings, setPendingSettings] = useState<AutoPlaySettings | null>(null);
   const [settings, setSettings] = useState<AutoPlaySettings>({
     riskLevel: 'GREEN',
     numberOfRounds: 10,
@@ -45,30 +48,89 @@ export default function AutoPlayModal({ open, onOpenChange, onStart, currentBala
     stopOnProfitEnabled: false,
     stopOnProfitAmount: 0,
     onLossStrategy: 'reset',
-    onLossPercent: 0,
+    onLossPercent: 1,
     onWinStrategy: 'reset',
-    onWinPercent: 0,
+    onWinPercent: 1,
   });
 
-  const roundOptions = [3, 10, 25, 100, 200, 500];
+  const roundOptions = [3, 10, 25, 50,100, 200];
 
   const updateSetting = <K extends keyof AutoPlaySettings>(key: K, value: AutoPlaySettings[K]) => {
     setSettings(prev => ({ ...prev, [key]: value }));
   };
 
   const adjustValue = (key: keyof AutoPlaySettings, delta: number) => {
-    setSettings(prev => ({
-      ...prev,
-      [key]: Math.max(0, (prev[key] as number) + delta)
-    }));
+    setSettings(prev => {
+      const currentValue = prev[key] as number;
+      const newValue = Math.max(0, Math.min(200, currentValue + delta));
+
+      // Check if percentage exceeds 10% and show warning
+      if ((key === 'onLossPercent' || key === 'onWinPercent') && newValue > 10) {
+        setPendingSettings({...prev, [key]: newValue});
+        setShowWarningModal(true);
+        return prev; // Don't update the actual settings yet
+      }
+
+      return {
+        ...prev,
+        [key]: key === 'onLossPercent' || key === 'onWinPercent'
+          ? Math.max(0, Math.min(200, newValue))
+          : Math.max(0, newValue)
+      };
+    });
   };
 
   const handleStart = () => {
-    onStart(settings);
-    onOpenChange(false);
+    // Validate settings before starting
+    if (settings.numberOfRounds <= 0) {
+      alert('Please select a valid number of rounds');
+      return;
+    }
+
+    // Validate stop conditions have positive amounts when enabled
+    if (settings.stopOnLossEnabled && settings.stopOnLossAmount <= 0) {
+      alert('Stop on loss amount must be greater than 0');
+      return;
+    }
+
+    if (settings.stopOnBigWinEnabled && settings.stopOnBigWinAmount <= 0) {
+      alert('Stop on big win amount must be greater than 0');
+      return;
+    }
+
+    if (settings.stopOnProfitEnabled && settings.stopOnProfitAmount <= 0) {
+      alert('Stop on profit amount must be greater than 0');
+      return;
+    }
+
+    // Check if any percentage is over 10%
+    const hasHighPercentage = settings.onWinPercent > 10 || settings.onLossPercent > 10;
+
+    if (hasHighPercentage) {
+      setPendingSettings(settings);
+      setShowWarningModal(true);
+    } else {
+      onStart(settings);
+      onOpenChange(false);
+    }
+  };
+
+  const handleConfirmHighPercentage = () => {
+    if (pendingSettings) {
+      setSettings(pendingSettings); // Update the actual settings
+      setShowWarningModal(false);
+      setPendingSettings(null);
+      // Don't start auto-play here, just update settings
+    }
+  };
+
+  const handleCancelHighPercentage = () => {
+    setShowWarningModal(false);
+    setPendingSettings(null);
   };
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] bg-gray-900 border-gray-700 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -463,5 +525,15 @@ export default function AutoPlayModal({ open, onOpenChange, onStart, currentBala
         </div>
       </DialogContent>
     </Dialog>
+
+    {/* High Percentage Warning Modal */}
+    <HighPercentageWarningModal
+      open={showWarningModal}
+      onOpenChange={setShowWarningModal}
+      onConfirm={handleConfirmHighPercentage}
+      onCancel={handleCancelHighPercentage}
+      settings={pendingSettings}
+    />
+    </>
   );
 }
