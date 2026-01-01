@@ -185,3 +185,42 @@ body {
 .win-loss-badge-exit {
   animation: winLossBadgeFadeOut 0.3s ease-out forwards;
 }
+
+/* Cell ripple effect for UI components */
+@theme inline {
+  --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1
+  var(--delay, 0ms);
+
+  @keyframes cell-ripple {
+    0% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 0.8;
+    }
+    100% {
+      opacity: 0.4;
+    }
+  }
+}
+
+/* Letter bounce animation for PLINKO title */
+@keyframes letterBounce {
+  0%, 94%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  95% {
+    transform: translateY(-8px) scale(1.1);
+  }
+  96.5% {
+    transform: translateY(2px) scale(0.95);
+  }
+  98% {
+    transform: translateY(-4px) scale(1.05);
+  }
+}
+
+.letter-bounce {
+  display: inline-block;
+  animation: letterBounce 15s ease-in-out infinite;
+}

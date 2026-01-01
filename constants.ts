@@ -8,16 +8,16 @@ export const CHUTE_RADIUS = 6;
 // Base colors for the UI
 export const COLORS = {
   PEG: 'rgb(28, 39, 58)',
-  GREEN: 'rgb(22, 102, 6)',
-  YELLOW: 'rgb(30, 144, 255)',
-  RED: 'rgb(255, 0, 0)',
+  GREEN: '#AFFC41',
+  YELLOW: '#4392F1',
+  RED: '#FF331F',
   BG_START: 'rgb(6, 19, 22)',
   BG_END: 'rgb(0, 191, 165)',
   UI_ACCENT: 'rgb(87, 250, 37)',
   UI_PANEL: 'rgb(5, 50, 57)',
-  BALL_GREEN: 'rgb(16, 136, 8)',
-  BALL_YELLOW: 'rgb(30, 144, 255)',
-  BALL_RED: 'rgb(239, 27, 27)',
+  BALL_GREEN: 'rgb(175, 252, 65)',
+  BALL_YELLOW: 'rgb(67, 146, 241)',
+  BALL_RED: 'rgb(255, 51, 31)',
 };
 
 // --- TUNABLE PHYSICS SETTINGS ---

@@ -19,7 +19,7 @@ function IntroScreen({ onComplete }: IntroScreenProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const duration = 3000; // 3 seconds
+    const duration = 5000; // 3 seconds
     const interval = 50; // Update every 50ms
     const steps = duration / interval;
     let currentStep = 0;
@@ -393,120 +393,63 @@ const Home: React.FC = () => {
 
   return (
     <div
-      className="flex flex-col h-screen w-full transition-all duration-1000 overflow-hidden"
+      className="flex flex-col h-screen w-full transition-all duration-1000 overflow-hidden relative"
       style={{
-        backgroundImage: `url("${isMobile ? '/ui/bg6.jpeg' : '/ui/pg.png'}")`,
+        backgroundImage: 'url(/ui/pg1.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed',
-        backgroundColor: 'black'
       }}
     >
-      {/* Main Navigation */}
-      <MainNav />
 
-      {/* HEADER SECTION */}
-      <header className="flex justify-between items-start px-2 py-1 z-30 mt-[45px]">
-        {/* History and Sound Toggle (Left) */}
-        <div className="flex flex-col gap-1 max-w-[60%]">
-          {/* History Row */}
-          <div className="flex items-center gap-1 overflow-hidden">
-            <button
-              onClick={() => setShowExtendedHistory(true)}
-              className="w-8 h-8 rounded-full bg-gradient-to-b from-gray-500 via-gray-600 to-gray-800 border-b-4 border-gray-900 shadow-xl shadow-gray-900/80 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75 text-white flex items-center justify-center flex-shrink-0"
-              title="View extended history"
-            >
-              <i className="fas fa-history text-xs"></i>
-            </button>
-            <div className="flex gap-0.5 overflow-x-auto no-scrollbar scroll-smooth">
-              {history.length > 0 ? history.slice(0, 6).map((item, index) => {
-              // Determine color based on risk level and multiplier
-              let bgColor = '';
-              const isDark = item.multiplier < 1;
+      {/* Main Content */}
+      <MainNav
+        balance={gameState.balance}
+        soundEnabled={soundEnabled}
+        onSoundToggle={() => setSoundEnabled(!soundEnabled)}
+        history={history}
+        onShowExtendedHistory={() => setShowExtendedHistory(true)}
+      />
 
-              if (item.risk === 'GREEN') {
-                bgColor = isDark ? 'bg-[rgb(100,140,45)]' : 'bg-[rgb(140,185,60)]';
-              } else if (item.risk === 'YELLOW') {
-                bgColor = isDark ? 'bg-[rgb(20,100,200)]' : 'bg-[rgb(30,144,255)]';
-              } else if (item.risk === 'RED') {
-                bgColor = isDark ? 'bg-[rgb(160,35,35)]' : 'bg-[rgb(210,50,50)]';
-              }
-
-              // Responsive visibility classes
-              let visibilityClass = '';
-              if (index >= 5) visibilityClass = 'hidden lg:block'; // 6th item: lg only
-              else if (index >= 3) visibilityClass = 'hidden md:block'; // 4th-5th items: md and lg
-              // Items 0-2: always visible
-
-              return (
-                <div
-                  key={item.id}
-                  className={`${index === 0 ? 'history-item-enter' : ''} ${visibilityClass} px-2 py-1 text-[11px] font-black min-w-fit text-white transition-all duration-300`}
-                >
-                  {item.multiplier}x
-                </div>
-              );
-            }) : (
-              <div className="text-[11px] text-white/60 font-bold uppercase tracking-widest px-1 italic">Waiting for results...</div>
-            )}
-            </div>
+      {/* Win/Loss Badge */}
+      <div className="fixed top-14 right-2 z-30">
+        {winLossBadge && (
+          <div
+            key={winLossBadge.key}
+            className={`win-loss-badge-enter px-2 py-1 rounded text-[10px] font-black ${
+              winLossBadge.amount >= 0
+                ? 'bg-green-500 text-white'
+                : 'bg-red-500 text-white'
+            } shadow-md border border-black/20`}
+          >
+            {winLossBadge.amount >= 0 ? '+' : ''}{winLossBadge.amount.toFixed(2)}
           </div>
+        )}
+      </div>
 
-          {/* Sound Toggle */}
-          <div className="flex items-center gap-2 pl-1">
-            <button
-              onClick={() => setSoundEnabled(!soundEnabled)}
-              className={`relative w-12 h-6 top-4 rounded-full transition-all duration-300 ${
-                soundEnabled
-                  ? 'bg-gradient-to-r from-green-500 to-green-600'
-                  : 'bg-gradient-to-r from-gray-600 to-gray-700'
-              } shadow-lg`}
+      {/* PLINKO Title - Fixed position 100px from top */}
+      <div className="fixed top-[100px] left-1/2 -translate-x-1/2 text-center z-10 pointer-events-none">
+        <h1 className="text-5xl lg:text-7xl font-black tracking-widest" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
+          {['P', 'L', 'I', 'N', 'K', 'O'].map((letter, i) => (
+            <span
+              key={i}
+              className="letter-bounce"
+              style={{
+                color: 'rgb(0, 247, 255)',
+                textShadow: '0 3px 0 rgba(0, 0, 0, 0.9), 0 6px 0 rgba(0, 0, 0, 0.7), 0 9px 0 rgba(0, 0, 0, 0.5), 0 12px 20px rgba(0, 247, 255, 0.5), 0 0 30px rgba(0, 247, 255, 0.3)',
+                animationDelay: `${i * 0.15}s`
+              }}
             >
-              <div
-                className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-all duration-300 flex items-center justify-center ${
-                  soundEnabled ? 'left-[26px]' : 'left-0.5'
-                }`}
-              >
-                <i className={`fas ${soundEnabled ? 'fa-volume-up' : 'fa-volume-mute'} text-[8px] ${soundEnabled ? 'text-green-600' : 'text-gray-600'}`}></i>
-              </div>
-            </button>
-            <span className="text-white text-[9px] font-bold uppercase tracking-wide">
-              {soundEnabled ? 'On' : 'Off'}
+              {letter}
             </span>
-          </div>
-        </div>
+          ))}
+        </h1>
+      </div>
 
-        {/* Win/Loss Badge and Balance (Right) */}
-        <div className="flex items-center gap-[1px]">
-          {/* Win/Loss Badge */}
-          {winLossBadge && (
-            <div
-              key={winLossBadge.key}
-              className={`win-loss-badge-enter px-1.5 py-0.5 rounded text-[8px] font-black ${
-                winLossBadge.amount >= 0
-                  ? 'bg-green-500 text-white'
-                  : 'bg-red-500 text-white'
-              } shadow-md border border-black/20`}
-            >
-              {winLossBadge.amount >= 0 ? '+' : ''}{winLossBadge.amount.toFixed(2)}
-            </div>
-          )}
-
-          {/* Balance */}
-          <div className="flex items-center gap-0 px-2 py-1">
-            <span className="text-white font-black text-[15px] border border-green-500 px-3 py-1 tracking-tight">
-              {gameState.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </span>
-            <span className="text-white/80 text-[15px] font-black border border-green-500 px-2 py-1">USD</span>
-          </div>
-        </div>
-      </header>
-
-      {/* MAIN CONTENT - Single column layout */}
-      <main className="flex-1 flex flex-col gap-1 p-1 pb-40 sm:pb-1 overflow-hidden">
+      {/* MAIN CONTENT - Full height with proper spacing for fixed elements */}
+      <main className="absolute inset-0 flex items-center justify-center pointer-events-auto" style={{ top: '130px', bottom: '220px' }}>
         {/* GAME BOARD */}
-        <div className="flex-1 w-full flex justify-center items-start bg-black/5 rounded-lg border border-black/10 shadow-inner pt-1 overflow-auto">
+        <div className="w-full h-full flex justify-center items-center">
           <PlinkoGame
             onScore={handleScore}
             lastDrop={lastDrop}
@@ -514,42 +457,54 @@ const Home: React.FC = () => {
             isAutoDrop={isAutoDrop}
           />
         </div>
+      </main>
 
-        {/* CONTROLS - Responsive Layout */}
+      {/* CONTROLS - Fixed 100px from bottom with 10px padding from game board */}
+      <div className="fixed bottom-[100px] left-0 right-0 z-20">
         <div
-          className="flex-shrink-0 bg-black/20 rounded-2xl"
+          className="flex-shrink-0 bg-black/20 rounded-2xl mx-auto pt-[10px]"
           style={{
-            backgroundColor: 'rgba(45, 12, 40, 0.65)'
+            backgroundColor: 'rgba(29, 246, 221, 0)'
           }}
         >
-          {/* Desktop Layout - Single Row */}
-          <div className="hidden sm:flex items-center justify-center gap-2 p-2">
-            {/* Bet Amount Display */}
-            <button
-              onClick={() => setShowCustomAmountModal(true)}
-              className="bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 rounded-full px-5 py-2 shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 min-w-[140px] hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75"
-            >
-              <div className="text-center">
-                <div className="text-white/60 text-[9px] font-medium uppercase tracking-wide">Bet USD</div>
-                <div className="text-white font-bold text-lg font-poppins">{wager.toFixed(2)}</div>
-              </div>
-            </button>
+          {/* Desktop Layout - 2 Rows */}
+          <div className="hidden sm:flex flex-col gap-2 p-2">
+            {/* Row 1: Bet Amount + Control Buttons */}
+            <div className="flex items-center justify-center gap-2">
+              {/* Bet Amount Display */}
+              <button
+                onClick={() => setShowCustomAmountModal(true)}
+                className="bg-gradient-to-b from-[#6FF4FF] via-[#1BE7FF] to-[#0BA5C4] rounded-full px-5 py-2 shadow-xl shadow-black/60 border-b-4 border-[#1BE7FF]/80 min-w-[140px] hover:from-[#1BE7FF] hover:via-[#1BE7FF]/90 hover:to-[#1BE7FF]/70 hover:shadow-black/80 hover:border-[#1BE7FF] active:shadow-inner active:shadow-black/40 active:border-[#1BE7FF]/60 active:scale-95 transition-all duration-75"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(27, 231, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
+              >
+                <div className="text-center">
+                  <div className="text-white/60 text-[9px] font-medium uppercase tracking-wide">Bet USD</div>
+                  <div className="text-white font-bold text-lg font-poppins">{wager.toFixed(2)}</div>
+                </div>
+              </button>
 
-            {/* Control Buttons Group */}
-            <div className="flex items-center gap-1.5">
+              {/* Control Buttons Group */}
               <button
                 onMouseDown={() => startAdjusting(-0.1)}
                 onMouseUp={stopAdjusting}
                 onMouseLeave={stopAdjusting}
                 onTouchStart={() => startAdjusting(-0.1)}
                 onTouchEnd={stopAdjusting}
-                className="w-8 h-8 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white font-bold text-xl shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75"
+                className="w-8 h-8 rounded-full bg-gradient-to-b from-[#6FF4FF] via-[#1BE7FF] to-[#0BA5C4] text-black font-bold text-xl shadow-xl shadow-black/60 border-b-4 border-[#1BE7FF]/80 hover:from-[#1BE7FF] hover:via-[#1BE7FF]/90 hover:to-[#1BE7FF]/70 hover:shadow-black/80 hover:border-[#1BE7FF] active:shadow-inner active:shadow-black/40 active:border-[#1BE7FF]/60 active:scale-95 transition-all duration-75"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(27, 231, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
               >
                 −
               </button>
               <button
                 onClick={() => setShowPresetModal(true)}
-                className="w-11 h-11 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75 flex items-center justify-center"
+                className="w-11 h-11 rounded-full bg-gradient-to-b from-[#6FF4FF] via-[#1BE7FF] to-[#0BA5C4] text-black shadow-xl shadow-black/60 border-b-4 border-[#1BE7FF]/80 hover:from-[#1BE7FF] hover:via-[#1BE7FF]/90 hover:to-[#1BE7FF]/70 hover:shadow-black/80 hover:border-[#1BE7FF] active:shadow-inner active:shadow-black/40 active:border-[#1BE7FF]/60 active:scale-95 transition-all duration-75 flex items-center justify-center"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(27, 231, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
               >
                 <i className="fas fa-layer-group text-sm"></i>
               </button>
@@ -559,78 +514,41 @@ const Home: React.FC = () => {
                 onMouseLeave={stopAdjusting}
                 onTouchStart={() => startAdjusting(0.1)}
                 onTouchEnd={stopAdjusting}
-                className="w-8 h-8 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white font-bold text-xl shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75"
+                className="w-8 h-8 rounded-full bg-gradient-to-b from-[#6FF4FF] via-[#1BE7FF] to-[#0BA5C4] text-black font-bold text-xl shadow-xl shadow-black/60 border-b-4 border-[#1BE7FF]/80 hover:from-[#1BE7FF] hover:via-[#1BE7FF]/90 hover:to-[#1BE7FF]/70 hover:shadow-black/80 hover:border-[#1BE7FF] active:shadow-inner active:shadow-black/40 active:border-[#1BE7FF]/60 active:scale-95 transition-all duration-75"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(27, 231, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
               >
                 +
               </button>
             </div>
 
-            {/* Risk Level Buttons */}
-            <button
-              onClick={() => dropBall('GREEN')}
-              className="h-10 px-6 rounded-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-green-800 hover:from-green-300 hover:via-green-400 hover:to-green-600 hover:shadow-gray-900/90 hover:border-green-700 active:shadow-inner active:shadow-gray-900/60 active:border-green-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
-            >
-              GREEN
-            </button>
-            <button
-              onClick={() => dropBall('YELLOW')}
-              className="h-10 px-6 rounded-full bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-blue-800 hover:from-blue-300 hover:via-blue-400 hover:to-blue-600 hover:shadow-gray-900/90 hover:border-blue-700 active:shadow-inner active:shadow-gray-900/60 active:border-blue-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
-            >
-              BLUE
-            </button>
-            <button
-              onClick={() => dropBall('RED')}
-              className="h-10 px-6 rounded-full bg-gradient-to-b from-red-400 via-red-500 to-red-700 text-white font-bold text-sm shadow-xl shadow-gray-900/80 border-b-4 border-red-800 hover:from-red-300 hover:via-red-400 hover:to-red-600 hover:shadow-gray-900/90 hover:border-red-700 active:shadow-inner active:shadow-gray-900/60 active:border-red-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
-            >
-              RED
-            </button>
-
-            {/* Auto Play Button */}
-            <button
-              onClick={() => {
-                if (isAutoDrop) {
-                  isAutoDropRef.current = false;
-                  autoPlaySettingsRef.current = null;
-                  setAutoPlaySettings(null);
-                  setIsAutoDrop(false);
-                  setRemainingBalls(0);
-                } else {
-                  setShowAutoPlayModal(true);
-                }
-              }}
-              className={`w-12 h-12 rounded-full shadow-xl border-b-4 active:scale-95 transition-all duration-75 flex items-center justify-center ${
-                isAutoDrop
-                  ? 'bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-700 text-white shadow-black/60 border-yellow-800 hover:from-yellow-300 hover:via-yellow-400 hover:to-yellow-600 hover:shadow-yellow-900/90 hover:border-yellow-700 active:shadow-inner active:shadow-yellow-900/60 active:border-yellow-900'
-                  : 'bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-700 text-white shadow-black/60 border-yellow-800 hover:from-yellow-300 hover:via-yellow-400 hover:to-yellow-600 hover:shadow-black/80 hover:border-yellow-700 active:shadow-inner active:shadow-black/60 active:border-yellow-900'
-              }`}
-            >
-              {isAutoDrop ? (
-                <span className="font-bold text-sm">{remainingBalls}</span>
-              ) : (
-                <i className="fas fa-sync-alt text-lg"></i>
-              )}
-            </button>
-          </div>
-
-          {/* Mobile Layout - 2 Rows */}
-          <div className="sm:hidden flex flex-col gap-2 p-1">
-            {/* Row 1: Risk Buttons + Auto Play */}
+            {/* Row 2: Risk Level Buttons + Auto Play */}
             <div className="flex items-center justify-center gap-2">
               <button
                 onClick={() => dropBall('GREEN')}
-                className="h-10 px-6 rounded-full bg-gradient-to-b from-green-400 via-green-500 to-green-700 text-white font-bold text-md shadow-xl shadow-gray-900/80 border-b-4 border-green-800 hover:from-green-300 hover:via-green-400 hover:to-green-600 hover:shadow-gray-900/90 hover:border-green-700 active:shadow-inner active:shadow-gray-900/60 active:border-green-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+                className="h-10 px-6 rounded-full bg-gradient-to-b from-[#AFFC41] via-[#AFFC41]/80 to-[#AFFC41]/60 text-black font-bold text-sm shadow-xl shadow-black/60 border-b-4 border-[#AFFC41]/80 hover:from-[#AFFC41] hover:via-[#AFFC41]/90 hover:to-[#AFFC41]/70 hover:shadow-black/80 hover:border-[#AFFC41] active:shadow-inner active:shadow-black/40 active:border-[#AFFC41]/60 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(175, 252, 65, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
               >
                 GREEN
               </button>
               <button
                 onClick={() => dropBall('YELLOW')}
-                className="h-10 px-6 rounded-full bg-gradient-to-b from-blue-400 via-blue-500 to-blue-700 text-white font-bold text-md shadow-xl shadow-gray-900/80 border-b-4 border-blue-800 hover:from-blue-300 hover:via-blue-400 hover:to-blue-600 hover:shadow-gray-900/90 hover:border-blue-700 active:shadow-inner active:shadow-gray-900/60 active:border-blue-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+                className="h-10 px-6 rounded-full bg-gradient-to-b from-[#4392F1] via-[#4392F1]/80 to-[#4392F1]/60 text-white font-bold text-sm shadow-xl shadow-black/60 border-b-4 border-[#4392F1]/80 hover:from-[#4392F1] hover:via-[#4392F1]/90 hover:to-[#4392F1]/70 hover:shadow-black/80 hover:border-[#4392F1] active:shadow-inner active:shadow-black/40 active:border-[#4392F1]/60 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(67, 146, 241, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
               >
                 BLUE
               </button>
               <button
                 onClick={() => dropBall('RED')}
-                className="h-10 px-6 rounded-full bg-gradient-to-b from-red-400 via-red-500 to-red-700 text-white font-bold text-md shadow-xl shadow-gray-900/80 border-b-4 border-red-800 hover:from-red-300 hover:via-red-400 hover:to-red-600 hover:shadow-gray-900/90 hover:border-red-700 active:shadow-inner active:shadow-gray-900/60 active:border-red-900 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+                className="h-10 px-6 rounded-full bg-gradient-to-b from-[#FF331F] via-[#FF331F]/80 to-[#FF331F]/60 text-white font-bold text-sm shadow-xl shadow-black/60 border-b-4 border-[#FF331F]/80 hover:from-[#FF331F] hover:via-[#FF331F]/90 hover:to-[#FF331F]/70 hover:shadow-black/80 hover:border-[#FF331F] active:shadow-inner active:shadow-black/40 active:border-[#FF331F]/60 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(255, 51, 31, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
               >
                 RED
               </button>
@@ -639,6 +557,9 @@ const Home: React.FC = () => {
               <button
                 onClick={() => {
                   if (isAutoDrop) {
+                    isAutoDropRef.current = false;
+                    autoPlaySettingsRef.current = null;
+                    setAutoPlaySettings(null);
                     setIsAutoDrop(false);
                     setRemainingBalls(0);
                   } else {
@@ -646,6 +567,118 @@ const Home: React.FC = () => {
                   }
                 }}
                 className={`w-12 h-12 rounded-full shadow-xl border-b-4 active:scale-95 transition-all duration-75 flex items-center justify-center ${
+                  isAutoDrop
+                    ? 'bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-700 text-white shadow-black/60 border-yellow-800 hover:from-yellow-300 hover:via-yellow-400 hover:to-yellow-600 hover:shadow-yellow-900/90 hover:border-yellow-700 active:shadow-inner active:shadow-yellow-900/60 active:border-yellow-900'
+                    : 'bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-700 text-white shadow-black/60 border-yellow-800 hover:from-yellow-300 hover:via-yellow-400 hover:to-yellow-600 hover:shadow-black/80 hover:border-yellow-700 active:shadow-inner active:shadow-black/60 active:border-yellow-900'
+                }`}
+              >
+                {isAutoDrop ? (
+                  <span className="font-bold text-sm">{remainingBalls}</span>
+                ) : (
+                  <i className="fas fa-sync-alt text-lg"></i>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Layout - 2 Rows */}
+          <div className="sm:hidden flex flex-col gap-2 p-1">
+            {/* Row 1: Bet Display + Control Buttons */}
+            <div className="flex items-center justify-center gap-4">
+              <button
+                onClick={() => setShowCustomAmountModal(true)}
+                className="bg-gradient-to-b from-[#6FF4FF] via-[#1BE7FF] to-[#0BA5C4] rounded-full px-5 py-2 shadow-xl shadow-black/60 border-b-4 border-[#1BE7FF]/80 min-w-[120px] hover:from-[#1BE7FF] hover:via-[#1BE7FF]/90 hover:to-[#1BE7FF]/70 hover:shadow-black/80 hover:border-[#1BE7FF] active:shadow-inner active:shadow-black/40 active:border-[#1BE7FF]/60 active:scale-95 transition-all duration-75"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(27, 231, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
+              >
+                <div className="text-center">
+                  <div className="text-white/60 text-[9px] font-medium uppercase tracking-wide">Bet USD</div>
+                  <div className="text-white font-bold text-lg font-poppins">{wager.toFixed(2)}</div>
+                </div>
+              </button>
+
+              <button
+                onMouseDown={() => startAdjusting(-0.1)}
+                onMouseUp={stopAdjusting}
+                onMouseLeave={stopAdjusting}
+                onTouchStart={() => startAdjusting(-0.1)}
+                onTouchEnd={stopAdjusting}
+                className="w-8 h-8 rounded-full bg-gradient-to-b from-[#6FF4FF] via-[#1BE7FF] to-[#0BA5C4] text-black font-bold text-xl shadow-xl shadow-black/60 border-b-4 border-[#1BE7FF]/80 hover:from-[#1BE7FF] hover:via-[#1BE7FF]/90 hover:to-[#1BE7FF]/70 hover:shadow-black/80 hover:border-[#1BE7FF] active:shadow-inner active:shadow-black/40 active:border-[#1BE7FF]/60 active:scale-95 transition-all duration-75"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(27, 231, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
+              >
+                −
+              </button>
+              <button
+                onClick={() => setShowPresetModal(true)}
+                className="w-11 h-11 rounded-full bg-gradient-to-b from-[#6FF4FF] via-[#1BE7FF] to-[#0BA5C4] text-black shadow-xl shadow-black/60 border-b-4 border-[#1BE7FF]/80 hover:from-[#1BE7FF] hover:via-[#1BE7FF]/90 hover:to-[#1BE7FF]/70 hover:shadow-black/80 hover:border-[#1BE7FF] active:shadow-inner active:shadow-black/40 active:border-[#1BE7FF]/60 active:scale-95 transition-all duration-75 flex items-center justify-center"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(27, 231, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
+              >
+                <i className="fas fa-layer-group text-sm"></i>
+              </button>
+              <button
+                onMouseDown={() => startAdjusting(0.1)}
+                onMouseUp={stopAdjusting}
+                onMouseLeave={stopAdjusting}
+                onTouchStart={() => startAdjusting(0.1)}
+                onTouchEnd={stopAdjusting}
+                className="w-8 h-8 rounded-full bg-gradient-to-b from-[#6FF4FF] via-[#1BE7FF] to-[#0BA5C4] text-black font-bold text-xl shadow-xl shadow-black/60 border-b-4 border-[#1BE7FF]/80 hover:from-[#1BE7FF] hover:via-[#1BE7FF]/90 hover:to-[#1BE7FF]/70 hover:shadow-black/80 hover:border-[#1BE7FF] active:shadow-inner active:shadow-black/40 active:border-[#1BE7FF]/60 active:scale-95 transition-all duration-75"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(27, 231, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
+              >
+                +
+              </button>
+            </div>
+
+            {/* Row 2: Risk Buttons + Auto Play */}
+            <div className="flex items-center justify-center gap-2">
+              <button
+                onClick={() => dropBall('GREEN')}
+                className="h-10 px-6 rounded-full bg-gradient-to-b from-[#AFFC41] via-[#AFFC41]/80 to-[#AFFC41]/60 text-black font-bold text-md shadow-xl shadow-black/60 border-b-4 border-[#AFFC41]/80 hover:from-[#AFFC41] hover:via-[#AFFC41]/90 hover:to-[#AFFC41]/70 hover:shadow-black/80 hover:border-[#AFFC41] active:shadow-inner active:shadow-black/40 active:border-[#AFFC41]/60 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(175, 252, 65, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
+              >
+                GREEN
+              </button>
+              <button
+                onClick={() => dropBall('YELLOW')}
+                className="h-10 px-6 rounded-full bg-gradient-to-b from-[#4392F1] via-[#4392F1]/80 to-[#4392F1]/60 text-white font-bold text-md shadow-xl shadow-black/60 border-b-4 border-[#4392F1]/80 hover:from-[#4392F1] hover:via-[#4392F1]/90 hover:to-[#4392F1]/70 hover:shadow-black/80 hover:border-[#4392F1] active:shadow-inner active:shadow-black/40 active:border-[#4392F1]/60 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(67, 146, 241, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
+              >
+                BLUE
+              </button>
+              <button
+                onClick={() => dropBall('RED')}
+                className="h-10 px-6 rounded-full bg-gradient-to-b from-[#FF331F] via-[#FF331F]/80 to-[#FF331F]/60 text-white font-bold text-md shadow-xl shadow-black/60 border-b-4 border-[#FF331F]/80 hover:from-[#FF331F] hover:via-[#FF331F]/90 hover:to-[#FF331F]/70 hover:shadow-black/80 hover:border-[#FF331F] active:shadow-inner active:shadow-black/40 active:border-[#FF331F]/60 active:scale-95 transition-all duration-75 uppercase tracking-wider"
+                style={{
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.6), 0 0 20px rgba(255, 51, 31, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                }}
+              >
+                RED
+              </button>
+
+              {/* Auto Play Button */}
+              <button
+                onClick={() => {
+                  if (isAutoDrop) {
+                    isAutoDropRef.current = false;
+                    autoPlaySettingsRef.current = null;
+                    setAutoPlaySettings(null);
+                    setIsAutoDrop(false);
+                    setRemainingBalls(0);
+                  } else {
+                    setShowAutoPlayModal(true);
+                  }
+                }}
+                className={`w-10 h-10 rounded-full shadow-xl border-b-4 active:scale-95 transition-all duration-75 flex items-center justify-center ${
                   isAutoDrop
                     ? 'bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-700 text-white shadow-black/60 border-yellow-800 hover:from-yellow-300 hover:via-yellow-400 hover:to-yellow-600 hover:shadow-black/80 hover:border-yellow-700 active:shadow-inner active:shadow-black/60 active:border-yellow-900'
                     : 'bg-gradient-to-b from-yellow-400 via-yellow-500 to-yellow-700 text-white shadow-black/60 border-yellow-800 hover:from-yellow-300 hover:via-yellow-400 hover:to-yellow-600 hover:shadow-black/80 hover:border-yellow-700 active:shadow-inner active:shadow-black/60 active:border-yellow-900'
@@ -658,51 +691,11 @@ const Home: React.FC = () => {
                 )}
               </button>
             </div>
-
-            {/* Row 2: Bet Display + Control Buttons */}
-            <div className="flex items-center justify-center gap-4">
-              <button
-                onClick={() => setShowCustomAmountModal(true)}
-                className="bg-gradient-to-b from-slate-900 via-slate-600 to-slate-800 rounded-full px-5 py-0 shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 flex-1 max-w-[180px] hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75"
-              >
-                <div className="text-center">
-                  <div className="text-green-500 text-[10px] font-medium uppercase">Bet USD</div>
-                  <div className="text-white font-bold text-lg font-poppinsxf">{wager.toFixed(2)}</div>
-                </div>
-              </button>
-
-              <button
-                onMouseDown={() => startAdjusting(-0.1)}
-                onMouseUp={stopAdjusting}
-                onMouseLeave={stopAdjusting}
-                onTouchStart={() => startAdjusting(-0.1)}
-                onTouchEnd={stopAdjusting}
-                className="w-8 h-8 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white font-bold text-xl shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75"
-              >
-                −
-              </button>
-              <button
-                onClick={() => setShowPresetModal(true)}
-                className="w-11 h-11 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75 flex items-center justify-center"
-              >
-                <i className="fas fa-layer-group text-sm"></i>
-              </button>
-              <button
-                onMouseDown={() => startAdjusting(0.1)}
-                onMouseUp={stopAdjusting}
-                onMouseLeave={stopAdjusting}
-                onTouchStart={() => startAdjusting(0.1)}
-                onTouchEnd={stopAdjusting}
-                className="w-8 h-8 rounded-full bg-gradient-to-b from-slate-950 via-slate-600 to-slate-800 text-white font-bold text-xl shadow-xl shadow-gray-900/80 border-b-4 border-gray-900 hover:from-gray-400 hover:via-gray-500 hover:to-gray-700 hover:shadow-gray-900/90 hover:border-gray-800 active:shadow-inner active:shadow-gray-900/60 active:border-gray-900 active:scale-95 transition-all duration-75"
-              >
-                +
-              </button>
-            </div>
           </div>
         </div>
-      </main>
+      </div>
 
-      {/* AutoPlay Modal */}
+      {/* Modals */}
       <AutoPlayModal
         open={showAutoPlayModal}
         onOpenChange={setShowAutoPlayModal}
@@ -710,21 +703,18 @@ const Home: React.FC = () => {
         currentBalance={gameState.balance}
       />
 
-      {/* Preset Amounts Modal */}
       <PresetAmountsModal
         open={showPresetModal}
         onOpenChange={setShowPresetModal}
         onSelectAmount={setWagerWithPersistence}
       />
 
-      {/* Extended History Modal */}
       <ExtendedHistoryModal
         open={showExtendedHistory}
         onOpenChange={setShowExtendedHistory}
         history={history}
       />
 
-      {/* Custom Amount Modal */}
       <CustomAmountModal
         open={showCustomAmountModal}
         onOpenChange={setShowCustomAmountModal}

@@ -1,11 +1,11 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Matter from 'matter-js';
-import {
-  PEG_RADIUS,
-  BALL_RADIUS,
-  ROWS,
-  BUCKET_HEIGHT,
+import { 
+  PEG_RADIUS, 
+  BALL_RADIUS, 
+  ROWS, 
+  BUCKET_HEIGHT, 
   MULTIPLIERS,
   COLORS,
   PHYSICS,
@@ -35,7 +35,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled
   const engineRef = useRef<Matter.Engine | null>(null);
   const renderRef = useRef<Matter.Render | null>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-
+  
   const ballsToRemove = useRef<Set<Matter.Body>>(new Set());
   const activeHits = useRef<Map<string, number>>(new Map());
   const pegHits = useRef<Map<number, number>>(new Map()); // Track single hits
@@ -324,21 +324,21 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled
     tiers.forEach((tier, tierIdx) => {
       const tierY = bucketBaseY + tierIdx * (tierHeight + tierGap);
 
-      for (let i = 0; i < bucketCount; i++) {
+    for (let i = 0; i < bucketCount; i++) {
         const x = bucketsStartX + i * bucketWidth + bucketWidth / 2;
         const sensor = Matter.Bodies.rectangle(x, tierY + tierHeight / 2, bucketWidth, tierHeight, {
-          isStatic: true,
-          isSensor: true,
-          label: CollisionLabel.BUCKET,
+        isStatic: true,
+        isSensor: true,
+        label: CollisionLabel.BUCKET,
           plugin: { index: i, tier: tier },
           collisionFilter: {
             category: COLLISION_CATEGORIES.BUCKET,
             mask: COLLISION_CATEGORIES.BALL  // Buckets only collide with balls
           },
-          render: { fillStyle: 'transparent' }
-        });
-        Matter.World.add(engine.world, sensor);
-      }
+        render: { fillStyle: 'transparent' }
+      });
+      Matter.World.add(engine.world, sensor);
+    }
     });
 
     Matter.Events.on(engine, 'collisionStart', (event) => {
@@ -353,7 +353,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled
           const existingHitTime = pegHits.current.get(peg.id);
           if (!existingHitTime) {
             // First hit - start animation
-            pegHits.current.set(peg.id, Date.now());
+          pegHits.current.set(peg.id, Date.now());
           }
           // Don't restart animation if peg is already glowing
         }
@@ -367,8 +367,8 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled
           if (ballRisk === tier) {
             const multiplier = MULTIPLIERS[tier][index];
             activeHits.current.set(`${tier}-${index}`, Date.now());
-            onScore(multiplier);
-            ballsToRemove.current.add(ball);
+          onScore(multiplier);
+          ballsToRemove.current.add(ball);
 
             // Play appropriate sound based on multiplier
             if (multiplier > 1) {
@@ -477,18 +477,18 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled
         ctx.shadowOffsetY = 0;
 
         // Draw simple white glow with fade in/out
-        // Calculate opacity with short fade in (150ms) and long fade out
-        let glowOpacity = 0;
-        if (elapsed < 150) {
-          // Quick fade in
-          glowOpacity = elapsed / 150;
-        } else if (elapsed < 400) {
-          // Full opacity in the middle
-          glowOpacity = 1.0;
+          // Calculate opacity with short fade in (150ms) and long fade out
+          let glowOpacity = 0;
+          if (elapsed < 150) {
+            // Quick fade in
+            glowOpacity = elapsed / 150;
+          } else if (elapsed < 400) {
+            // Full opacity in the middle
+            glowOpacity = 1.0;
         } else if (elapsed < 2900) {
-          // Long fade out (2500ms)
-          glowOpacity = 1.0 - ((elapsed - 400) / 2500);
-        }
+            // Long fade out (2500ms)
+            glowOpacity = 1.0 - ((elapsed - 400) / 2500);
+          }
 
         // Clamp opacity to valid range
         glowOpacity = Math.max(0, Math.min(1, glowOpacity));
@@ -500,15 +500,82 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled
           ctx.shadowBlur = 10 * glowOpacity * scaleFactor;
 
           ctx.fillStyle = `rgba(255, 255, 255, ${glowOpacity * 0.6})`;
-          ctx.beginPath();
+            ctx.beginPath();
           ctx.arc(peg.position.x, peg.position.y, scaledPegRadius + 2 * scaleFactor, 0, Math.PI * 2);
-          ctx.fill();
+            ctx.fill();
         }
         ctx.restore();
         });
 
-      // Draw balls with gradient fills
+      // Draw ball trails (fading neon effect)
       const balls = engine.world.bodies.filter(body => body.label === CollisionLabel.BALL);
+      balls.forEach((ball: Matter.Body) => {
+        // Store trail positions for this ball
+        if (!ball.plugin.trail) {
+          ball.plugin.trail = [];
+        }
+
+        // Add current position to trail
+        ball.plugin.trail.push({
+          x: ball.position.x,
+          y: ball.position.y,
+          timestamp: now
+        });
+
+        // Keep only recent positions (last 8 positions, ~200ms)
+        if (ball.plugin.trail.length > 8) {
+          ball.plugin.trail.shift();
+        }
+
+        // Remove old positions
+        ball.plugin.trail = ball.plugin.trail.filter((pos: any) => now - pos.timestamp < 200);
+
+        // Draw trail with decreasing opacity
+        ball.plugin.trail.forEach((pos: any, index: number) => {
+          const age = now - pos.timestamp;
+          const opacity = Math.max(0.1, 1 - (age / 200)); // Fade over 200ms
+          const trailRadius = scaledBallRadius * (0.8 - (index * 0.05)); // Shrink trail
+
+          if (trailRadius > 0 && opacity > 0.05) {
+            ctx.save();
+            ctx.globalAlpha = opacity * 0.3; // Make trail semi-transparent
+
+            // Get ball color for trail
+            const trailColor = ball.plugin.risk === 'GREEN' ? COLORS.BALL_GREEN :
+                              ball.plugin.risk === 'YELLOW' ? COLORS.BALL_YELLOW :
+                              COLORS.BALL_RED;
+
+            // Create trail gradient
+            const trailGradient = ctx.createRadialGradient(
+              pos.x - trailRadius * 0.3,
+              pos.y - trailRadius * 0.3,
+              0,
+              pos.x,
+              pos.y,
+              trailRadius
+            );
+
+            // Parse RGB for trail color
+            const rgbMatch = trailColor.match(/#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/);
+            if (rgbMatch) {
+              const [_, r, g, b] = rgbMatch.map(x => parseInt(x, 16));
+              trailGradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity * 0.6})`);
+              trailGradient.addColorStop(0.7, `rgba(${r}, ${g}, ${b}, ${opacity * 0.3})`);
+              trailGradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${opacity * 0.1})`);
+            }
+
+            // Draw trail
+            ctx.fillStyle = trailGradient;
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, trailRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+          }
+        });
+      });
+
+      // Draw balls with gradient fills (on top of trails)
       balls.forEach((ball: Matter.Body) => {
         ctx.save();
 
@@ -545,7 +612,7 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled
 
         // Add subtle stroke for definition
         ctx.strokeStyle = ballColor;
-        ctx.lineWidth = 1;
+      ctx.lineWidth = 1;
         ctx.stroke();
 
         ctx.restore();
@@ -554,9 +621,9 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled
       // Bucket Multipliers Rendering - Professional Clean Layout
       const tiers: RiskLevel[] = ['GREEN', 'YELLOW', 'RED'];
       const tierColors = {
-        GREEN: { normal: 'rgb(140, 185, 60)', dark: 'rgb(100, 140, 45)' },
-        YELLOW: { normal: 'rgb(30, 144, 255)', dark: 'rgb(20, 100, 200)' },
-        RED: { normal: 'rgb(210, 50, 50)', dark: 'rgb(160, 35, 35)' }
+        GREEN: { normal: '#AFFC41', dark: '#8CE63A' },
+        YELLOW: { normal: '#4392F1', dark: '#2A6BC8' },
+        RED: { normal: '#FF331F', dark: '#D12822' }
       };
 
       tiers.forEach((tier, tIdx) => {
@@ -645,11 +712,11 @@ const PlinkoGame: React.FC<PlinkoGameProps> = ({ onScore, lastDrop, soundEnabled
 
     // Use scaled values from ref
     const { ballRadius, boardOffsetX, boardWidth, dropY } = scaledValuesRef.current;
-
+    
     // Spawn centered within the fixed board with narrow spread
     const spawnX = boardOffsetX + (boardWidth / 2) + (Math.random() * PHYSICS.SPAWN_RANGE_X - PHYSICS.SPAWN_RANGE_X / 2);
     const initialVelX = (Math.random() - 0.5) * PHYSICS.INITIAL_V_X_VARIANCE;
-
+    
     const ball = Matter.Bodies.circle(spawnX, dropY, ballRadius, {
       restitution: PHYSICS.BALL_RESTITUTION,
       friction: PHYSICS.BALL_FRICTION,

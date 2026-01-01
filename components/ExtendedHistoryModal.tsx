@@ -52,15 +52,7 @@ export default function ExtendedHistoryModal({
         }}
       >
         <DialogHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-sm font-bold text-white uppercase tracking-wide">Last Results</DialogTitle>
-            <button
-              onClick={() => onOpenChange(false)}
-              className="w-8 h-8 rounded-full border-2 border-white/40 bg-white/10 hover:bg-white/20 text-white transition-all flex items-center justify-center"
-            >
-              <i className="fas fa-sync-alt text-xs"></i>
-            </button>
-          </div>
+          <DialogTitle className="text-sm font-bold text-white uppercase tracking-wide text-center">Last Results</DialogTitle>
         </DialogHeader>
 
         <div className="overflow-y-auto max-h-[400px] pr-1 custom-scrollbar">

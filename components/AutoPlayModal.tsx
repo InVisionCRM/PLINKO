@@ -44,6 +44,9 @@ export default function AutoPlayModal({ open, onOpenChange, onStart, currentBala
     }
     return false;
   });
+  const [showNumpad, setShowNumpad] = useState(false);
+  const [numpadTarget, setNumpadTarget] = useState<keyof AutoPlaySettings | null>(null);
+  const [numpadValue, setNumpadValue] = useState('');
   const [settings, setSettings] = useState<AutoPlaySettings>({
     riskLevel: 'GREEN',
     numberOfRounds: 10,
@@ -130,6 +133,40 @@ export default function AutoPlayModal({ open, onOpenChange, onStart, currentBala
   const handleCancelHighPercentage = () => {
     setShowWarningModal(false);
     setPendingSettings(null);
+  };
+
+  const openNumpad = (target: keyof AutoPlaySettings) => {
+    setNumpadTarget(target);
+    setNumpadValue(settings[target as keyof typeof settings].toString());
+    setShowNumpad(true);
+  };
+
+  const handleNumpadConfirm = () => {
+    if (numpadTarget && numpadValue) {
+      const numValue = parseInt(numpadValue);
+      if (!isNaN(numValue)) {
+        adjustValue(numpadTarget, numValue - (settings[numpadTarget] as number));
+      }
+    }
+    setShowNumpad(false);
+    setNumpadTarget(null);
+    setNumpadValue('');
+  };
+
+  const handleNumpadCancel = () => {
+    setShowNumpad(false);
+    setNumpadTarget(null);
+    setNumpadValue('');
+  };
+
+  const addNumpadDigit = (digit: string) => {
+    if (numpadValue.length < 3) { // Max 3 digits
+      setNumpadValue(prev => prev + digit);
+    }
+  };
+
+  const clearNumpad = () => {
+    setNumpadValue('');
   };
 
   return (
@@ -377,14 +414,19 @@ export default function AutoPlayModal({ open, onOpenChange, onStart, currentBala
                     </button>
                     <div className="flex items-center justify-center gap-2">
                       <button
-                        onClick={() => adjustValue('onLossPercent', -5)}
+                        onClick={() => adjustValue('onLossPercent', -1)}
                         className="w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs"
                       >
                         −
                       </button>
-                      <span className="text-white font-bold text-xl">{settings.onLossPercent}%</span>
+                      <span
+                        className="text-white font-bold text-xl cursor-pointer hover:text-yellow-400 transition-colors"
+                        onClick={() => openNumpad('onLossPercent')}
+                      >
+                        {settings.onLossPercent}%
+                      </span>
                       <button
-                        onClick={() => adjustValue('onLossPercent', 5)}
+                        onClick={() => adjustValue('onLossPercent', 1)}
                         className="w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs"
                       >
                         +
@@ -410,14 +452,19 @@ export default function AutoPlayModal({ open, onOpenChange, onStart, currentBala
                     </button>
                     <div className="flex items-center justify-center gap-2">
                       <button
-                        onClick={() => adjustValue('onLossPercent', -5)}
+                        onClick={() => adjustValue('onLossPercent', -1)}
                         className="w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs"
                       >
                         −
                       </button>
-                      <span className="text-white font-bold text-xl">{settings.onLossPercent}%</span>
+                      <span
+                        className="text-white font-bold text-xl cursor-pointer hover:text-yellow-400 transition-colors"
+                        onClick={() => openNumpad('onLossPercent')}
+                      >
+                        {settings.onLossPercent}%
+                      </span>
                       <button
-                        onClick={() => adjustValue('onLossPercent', 5)}
+                        onClick={() => adjustValue('onLossPercent', 1)}
                         className="w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs"
                       >
                         +
@@ -466,14 +513,19 @@ export default function AutoPlayModal({ open, onOpenChange, onStart, currentBala
                     </button>
                     <div className="flex items-center justify-center gap-2">
                       <button
-                        onClick={() => adjustValue('onWinPercent', -5)}
+                        onClick={() => adjustValue('onWinPercent', -1)}
                         className="w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs"
                       >
                         −
                       </button>
-                      <span className="text-white font-bold text-xl">{settings.onWinPercent}%</span>
+                      <span
+                        className="text-white font-bold text-xl cursor-pointer hover:text-yellow-400 transition-colors"
+                        onClick={() => openNumpad('onWinPercent')}
+                      >
+                        {settings.onWinPercent}%
+                      </span>
                       <button
-                        onClick={() => adjustValue('onWinPercent', 5)}
+                        onClick={() => adjustValue('onWinPercent', 1)}
                         className="w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs"
                       >
                         +
@@ -499,14 +551,19 @@ export default function AutoPlayModal({ open, onOpenChange, onStart, currentBala
                     </button>
                     <div className="flex items-center justify-center gap-2">
                       <button
-                        onClick={() => adjustValue('onWinPercent', -5)}
+                        onClick={() => adjustValue('onWinPercent', -1)}
                         className="w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs"
                       >
                         −
                       </button>
-                      <span className="text-white font-bold text-xl">{settings.onWinPercent}%</span>
+                      <span
+                        className="text-white font-bold text-xl cursor-pointer hover:text-yellow-400 transition-colors"
+                        onClick={() => openNumpad('onWinPercent')}
+                      >
+                        {settings.onWinPercent}%
+                      </span>
                       <button
-                        onClick={() => adjustValue('onWinPercent', 5)}
+                        onClick={() => adjustValue('onWinPercent', 1)}
                         className="w-8 h-8 rounded-full bg-gray-900 hover:bg-gray-800 text-white flex items-center justify-center text-xs"
                       >
                         +
@@ -528,6 +585,62 @@ export default function AutoPlayModal({ open, onOpenChange, onStart, currentBala
         </div>
       </DialogContent>
     </Dialog>
+
+    {/* Numpad Modal */}
+    {showNumpad && (
+      <Dialog open={showNumpad} onOpenChange={setShowNumpad}>
+        <DialogContent className="sm:max-w-[300px] bg-gray-900 border-gray-700">
+          <DialogHeader>
+            <DialogTitle className="text-white text-center">
+              Enter {numpadTarget === 'onWinPercent' ? 'Win' : 'Loss'} Percentage
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {/* Display */}
+            <div className="bg-gray-800 p-4 rounded-lg text-center">
+              <span className="text-white text-2xl font-bold">{numpadValue || '0'}</span>
+              <span className="text-white text-xl ml-1">%</span>
+            </div>
+
+            {/* Numpad Grid */}
+            <div className="grid grid-cols-3 gap-2">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((digit) => (
+                <button
+                  key={digit}
+                  onClick={() => addNumpadDigit(digit.toString())}
+                  className="bg-gray-700 hover:bg-gray-600 text-white p-4 rounded-lg font-bold text-xl transition-colors"
+                >
+                  {digit}
+                </button>
+              ))}
+              <button
+                onClick={clearNumpad}
+                className="bg-red-600 hover:bg-red-700 text-white p-4 rounded-lg font-bold text-lg transition-colors col-span-2"
+              >
+                Clear
+              </button>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={handleNumpadCancel}
+                className="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg font-semibold transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleNumpadConfirm}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition-colors"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    )}
 
     {/* High Percentage Warning Modal */}
     <HighPercentageWarningModal
